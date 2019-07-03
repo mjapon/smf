@@ -1,2 +1,2 @@
-# smf
-Sistema de facturacion y contable
+# smartfact
+Sistema de Facturacion y Contabilidad SmartFact
