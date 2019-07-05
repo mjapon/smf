@@ -464,6 +464,7 @@ public class HomeFrame extends BaseFrame {
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/icons8-giving_tickets.png"))); // NOI18N
         jButton2.setText("Tickets");
         jButton2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jButton2.setEnabled(false);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);

@@ -244,10 +244,9 @@ public class SmartFactMain extends javax.swing.JFrame {
         estadosApp = new HashMap<>();        
         //estadosApp.put(ArticulosFrame.class.getName(), createEstado(ArticulosFrame.class.getName(), 0));
         
-        estadosApp.put(FacturaVentaFrame.class.getName()+"1", createEstado(FacturaVentaFrame.class.getName(), 1));        
-        estadosApp.put(AdminVentasFrame.class.getName()+"1", createEstado(AdminVentasFrame.class.getName(), 1));    
-        estadosApp.put(CuentasXCBPFrame.class.getName()+"3", createEstado(CuentasXCBPFrame.class.getName(), 3));    
-        
+        estadosApp.put(FacturaVentaFrame.class.getName()+"1", createEstado(FacturaVentaFrame.class.getName(), 1));
+        estadosApp.put(AdminVentasFrame.class.getName()+"1", createEstado(AdminVentasFrame.class.getName(), 1));
+        estadosApp.put(CuentasXCBPFrame.class.getName()+"3", createEstado(CuentasXCBPFrame.class.getName(), 3));
         
         estadosApp.put(FacturaVentaFrame.class.getName()+"2", createEstado(FacturaVentaFrame.class.getName(), 2));
         estadosApp.put(AdminVentasFrame.class.getName()+"2", createEstado(AdminVentasFrame.class.getName(), 2));
