@@ -112,7 +112,10 @@ public class Facturas implements Serializable {
     
     @Column(name = "fact_subt12")
     private BigDecimal factSubt12;
-    
+
+    @Column(name = "tdv_id")
+    private Integer tdvId;
+
     public Facturas() {
     }
 
@@ -334,6 +337,13 @@ public class Facturas implements Serializable {
     public void setFactSubt12(BigDecimal factSubt12) {
         this.factSubt12 = factSubt12;
     }
-    
-    
+
+
+    public Integer getTdvId() {
+        return tdvId;
+    }
+
+    public void setTdvId(Integer tdvId) {
+        this.tdvId = tdvId;
+    }
 }

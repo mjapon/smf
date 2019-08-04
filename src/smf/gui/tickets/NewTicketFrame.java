@@ -21,10 +21,8 @@ import smf.controller.TicketsJpaController;
 import smf.entity.Caja;
 import smf.entity.Clientes;
 import smf.gui.BaseFrame;
-import smf.util.FechasUtil;
-import smf.util.ItemFusay;
-import smf.util.PrintFactUtil;
-import smf.util.StringUtil;
+import smf.gui.SmartFactMain;
+import smf.util.*;
 import smf.util.datamodels.ProveedoresListModel;
 import smf.util.datamodels.rows.TicketRow;
 
@@ -46,6 +44,7 @@ public class NewTicketFrame extends BaseFrame {
     private FacturasJpaController facturasCntrl;
     
     private ProveedoresListModel artsListModel;
+    private DatosUserSesion datosUserSesion;
 
     /**
      * Creates new form NewTicketFrame
@@ -60,7 +59,9 @@ public class NewTicketFrame extends BaseFrame {
         articulosCntrl = new ArticulosJpaController(em);
         facturasCntrl = new FacturasJpaController(em);
         cajaJpaController = new CajaJpaController(em);
-        
+
+        datosUserSesion = SmartFactMain.getDatosUserSesion();
+
         initForm();
         
     }
@@ -69,22 +70,20 @@ public class NewTicketFrame extends BaseFrame {
         boolean resultAperturaCaja = false;
         try{
             Date today = new Date();
-            if (!cajaJpaController.existeCajaAbierta(today)){
-                if (cajaJpaController.existeCajaAbiertaMenorFecha(today)){
-                    Caja caja = cajaJpaController.getCajaAbiertaMenorFecha(today);
-                    if (caja != null){
-                        showMsg(" Existe una caja anterior no cerrada (fecha:"+FechasUtil.format(caja.getCjFecaper())+" ), debe cerrar esta caja antes de empezar el día ");
-                    }
-                    else{
+            if (!cajaJpaController.existeCajaAbierta(today, datosUserSesion.getTdvId())) {
+
+                if (cajaJpaController.existeCajaAbiertaMenorFecha(today,datosUserSesion.getTdvId())) {
+                    Caja caja = cajaJpaController.getCajaAbiertaMenorFecha(today,datosUserSesion.getTdvId());
+                    if (caja != null) {
+                        showMsg(" Existe una caja anterior no cerrada (fecha:" + FechasUtil.format(caja.getCjFecaper()) + " ), debe cerrar esta caja antes de empezar el día ");
+                    } else {
                         showMsg(" Existe una caja anterior no cerrada, debe cerrar esta caja antes de empezar el dia ");
-                    }                    
+                    }
                     resultAperturaCaja = false;
-                }
-                else{
+                } else {
                     showMsg("Primero debe hacer apertura de caja para empezar a vender");
                 }
-            }
-            else{
+            } else {
                 resultAperturaCaja = true;
             }
         }
@@ -393,7 +392,7 @@ public class NewTicketFrame extends BaseFrame {
             
             ticketRow.setTkServicios(servicios);
             
-            Integer factId = facturasCntrl.crearTicket(ticketRow);
+            Integer factId = facturasCntrl.crearTicket(ticketRow, datosUserSesion.getTdvId());
             ticketRow.setFactId(factId);
             
             Integer ticketid = controller.crear(ticketRow);

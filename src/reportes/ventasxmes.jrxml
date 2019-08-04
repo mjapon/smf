@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ventasxmes" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f6363c24-1ee5-413c-96a8-05dcbc76318a">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="FarmaJJPostgresDataAdap"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="253"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="736"/>
+	<parameter name="pdesde" class="java.util.Date"/>
+	<parameter name="phasta" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="pdescparams" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select
+  EXTRACT(YEAR FROM f.fact_fecreg) As anio,
+  EXTRACT(MONTH FROM f.fact_fecreg) As mesn,
+  case when EXTRACT(MONTH FROM f.fact_fecreg) =1 THEN 'Enero'
+  when EXTRACT(MONTH FROM f.fact_fecreg) =2 THEN 'Febrero'
+  when EXTRACT(MONTH FROM f.fact_fecreg) =3 THEN 'Marzo'
+  when EXTRACT(MONTH FROM f.fact_fecreg) =4 THEN 'Abril'
+  when EXTRACT(MONTH FROM f.fact_fecreg) =5 THEN 'Mayo'
+  when EXTRACT(MONTH FROM f.fact_fecreg) =6 THEN 'Junio'
+  when EXTRACT(MONTH FROM f.fact_fecreg) =7 THEN 'Julio'
+  when EXTRACT(MONTH FROM f.fact_fecreg) =8 THEN 'Agosto'
+  when EXTRACT(MONTH FROM f.fact_fecreg) =9 THEN 'Septiembre'
+  when EXTRACT(MONTH FROM f.fact_fecreg) =10 THEN 'Octubre'
+  when EXTRACT(MONTH FROM f.fact_fecreg) =11 THEN 'Noviembre'
+  when EXTRACT(MONTH FROM f.fact_fecreg) =12 THEN 'Diciembre'  end as mes,
+  coalesce(round(sum(GET_PAGO(f.fact_id,1)),2),0.0) AS efectivo,
+    coalesce(round(sum(GET_PAGO(f.fact_id,2)),2),0.0) AS credito,
+  round(sum(f.fact_total),2) AS total
+from facturas f
+  join pagosfact p ON f.fact_id = p.fact_id
+  where f.tra_id =1 and
+        f.fact_valido =0 and f.fact_fecreg BETWEEN  $P{pdesde}  AND  $P{phasta} 
+   GROUP BY 1,2 order by 1,2]]>
+	</queryString>
+	<field name="anio" class="java.lang.Integer"/>
+	<field name="mesn" class="java.lang.Double"/>
+	<field name="mes" class="java.lang.String"/>
+	<field name="efectivo" class="java.math.BigDecimal"/>
+	<field name="credito" class="java.math.BigDecimal"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="90" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="10" width="545" height="30" uuid="99105fce-525e-47d3-a81c-a6f33c43aa2f"/>
+				<textElement>
+					<font fontName="Arial" size="20" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Reporte de ventas por mes]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="40" width="550" height="30" uuid="3f35dfb1-e6eb-4b21-a994-9c55b7549c57"/>
+				<textElement>
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pdescparams}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="451" y="70" width="100" height="14" uuid="4a401b0d-e673-491b-980d-d52745df77a8"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="365" y="70" width="85" height="15" uuid="2d5d2d73-80c4-4476-918d-cef2af4bbf54">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Fecha del reporte:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="12" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="22" splitType="Stretch">
+			<staticText>
+				<reportElement x="110" y="0" width="140" height="20" uuid="45100bbe-7a33-4e97-8ed0-8408781057be"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Mes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="470" y="0" width="60" height="20" uuid="edee2e5e-dcd2-4361-98c8-47abfbef0bcf"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="2" width="100" height="17" uuid="f4219631-362c-4ddc-9a6c-d2ac1ac4a6e0"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Año]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="2" width="100" height="20" uuid="0577b5a6-4358-4c5f-ad96-65bd3dd807b6"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Efectivo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="357" y="2" width="70" height="20" uuid="906979ba-c80f-452f-8055-44df58449a44"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Crédito]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="110" y="0" width="140" height="20" uuid="05f5f254-4545-453c-8a75-b7c24a227ee9"/>
+				<textFieldExpression><![CDATA[$F{mes}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="470" y="0" width="80" height="20" uuid="05ac1c79-11bd-4b55-87eb-f7ce99cfcd22"/>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="38645a1b-eedf-43e0-bdac-31b3106707cb"/>
+				<textFieldExpression><![CDATA[$F{anio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="250" y="0" width="100" height="20" uuid="2c4f3e75-3868-46f4-9826-f679009db093"/>
+				<textFieldExpression><![CDATA[$F{efectivo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="357" y="0" width="100" height="20" uuid="be41ec02-c7ae-4e77-b98a-27ac44c71cda"/>
+				<textFieldExpression><![CDATA[$F{credito}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="20" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="347" splitType="Stretch">
+			<pieChart>
+				<chart evaluationTime="Report">
+					<reportElement x="10" y="0" width="500" height="290" uuid="56155ea4-99ed-419e-8935-9edfdf11efb4"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<pieDataset>
+					<keyExpression><![CDATA[$F{mes}]]></keyExpression>
+					<valueExpression><![CDATA[$F{total}]]></valueExpression>
+					<labelExpression><![CDATA[$F{mes} + "-"+ $F{total}.toString()]]></labelExpression>
+				</pieDataset>
+				<piePlot>
+					<plot/>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

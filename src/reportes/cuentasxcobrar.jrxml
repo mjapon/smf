@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cuentasxcobrar" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="26b2d34c-1d62-4ec7-aae0-9303c2436bdc">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="116"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="873"/>
+	<parameter name="pdesde" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="phasta" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="pdescparams" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pwhere" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pcliid" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+f.fact_id as factId,
+f.fact_num as factNum,
+f.fact_fecreg as factFecreg,
+f.fact_total as factTotal,
+coalesce(cli.cli_nombres,'') ||' '|| coalesce(cli.cli_apellidos,'') as cliente,
+cli.cli_ci as cliCi,
+p.pgf_fecreg as pgfFecreg,
+p.pgf_monto as pgfMonto,
+p.pgf_saldo as pgfSaldo,
+p.pgf_obs as pgfObs,
+p.pgf_id as pgfId,
+case when p.pgf_saldo > 0.0 then 'PENDIENTE DE PAGO' else 'FACTURA CANCELADA' end as estadoDesc
+from facturas f
+join pagosfact p on p.fact_id = f.fact_id and p.fp_id = 2 and f.tra_id = 1 and p.pgf_monto>0.0 and p.pgf_saldo > 0.0
+join clientes cli ON f.cli_id = cli.cli_id   
+where f.fact_valido = 0 $P!{pwhere}    
+ORDER BY cliente]]>
+	</queryString>
+	<field name="factid" class="java.lang.Integer"/>
+	<field name="factnum" class="java.lang.String"/>
+	<field name="factfecreg" class="java.sql.Timestamp"/>
+	<field name="facttotal" class="java.math.BigDecimal"/>
+	<field name="cliente" class="java.lang.String"/>
+	<field name="clici" class="java.lang.String"/>
+	<field name="pgffecreg" class="java.sql.Timestamp"/>
+	<field name="pgfmonto" class="java.math.BigDecimal"/>
+	<field name="pgfsaldo" class="java.math.BigDecimal"/>
+	<field name="pgfobs" class="java.lang.String"/>
+	<field name="pgfid" class="java.lang.Integer"/>
+	<field name="estadodesc" class="java.lang.String"/>
+	<variable name="SumTotal" class="java.math.BigDecimal" incrementType="Report" calculation="Sum">
+		<variableExpression><![CDATA[$F{facttotal}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<variable name="SumSaldo" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{pgfsaldo}]]></variableExpression>
+		<initialValueExpression><![CDATA[0]]></initialValueExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="86" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="3" width="545" height="30" uuid="5e77d603-0786-453f-8e0b-329a2dd27c2f"/>
+				<textElement>
+					<font fontName="Arial" size="20" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Reporte de cuentas por cobrar]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="700" y="63" width="100" height="14" uuid="43875137-d6d1-4fe1-853e-ca9f1eefd515"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="600" y="63" width="99" height="15" uuid="1f523ea9-2a81-4877-a238-7be3eb627e91">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Fecha del reporte:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="29" width="780" height="30" uuid="450325b4-a70b-4530-8ba3-1050944de854"/>
+				<textElement>
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pdescparams}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="5" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="24" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20" uuid="a5fc881a-724c-4fbe-9cfd-5ca8505a9191"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Núm. Factura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="100" height="20" uuid="59a770f7-b4de-4122-a2ad-fce32aa9a6d3"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Fecha registro]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="0" width="100" height="20" uuid="25eeb0ca-cd43-4e9e-8dc2-db467d9ecb2f"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CI Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="300" y="0" width="130" height="20" uuid="9deb822c-bd0d-4676-8853-c0ecdf94ee6e"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Cliente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="440" y="0" width="100" height="20" uuid="bed218be-737f-42fd-a07d-e81efa5b7978"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Monto Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="540" y="0" width="100" height="20" uuid="17c640d7-8ab5-4f7e-b234-85fff62d0524"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Saldo Pendiente]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="640" y="0" width="160" height="20" uuid="8364446a-8b7c-4742-96d6-3a781a2f9289"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Obs]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="8cddd473-ab6f-4d50-9855-d9bc4a5b364c"/>
+				<textFieldExpression><![CDATA[$F{factnum}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="100" height="20" uuid="cd2b1fcd-b270-432a-8504-a83baa18a540"/>
+				<textFieldExpression><![CDATA[$F{factfecreg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="100" height="20" uuid="73e58f9f-8604-4923-9435-cecfa36cd2f1"/>
+				<textFieldExpression><![CDATA[$F{clici}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="300" y="0" width="130" height="20" uuid="9711e113-6efa-4ffe-bdba-3e8f2ff35fcb"/>
+				<textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="440" y="0" width="100" height="20" uuid="7db34ff5-5ba2-44dd-a82c-a8bc3bc3d0b5"/>
+				<textFieldExpression><![CDATA[$F{pgfmonto}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="540" y="0" width="100" height="20" uuid="54dcd3fa-bc49-4b33-8dda-2538d465d9f4"/>
+				<textFieldExpression><![CDATA[$F{pgfsaldo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="640" y="0" width="160" height="20" uuid="63fd6494-0e6d-483c-90db-13458bd869f8"/>
+				<textFieldExpression><![CDATA[$F{pgfobs}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="30" splitType="Stretch">
+			<textField>
+				<reportElement x="540" y="0" width="100" height="20" uuid="cfd97e6a-ba30-4560-b32e-aa8f1d2c4721"/>
+				<textFieldExpression><![CDATA[$V{SumSaldo}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="440" y="0" width="100" height="20" uuid="ebaa5303-3595-4d95-b11c-35ac93952ba7"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="18" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="21" splitType="Stretch"/>
+	</summary>
+</jasperReport>

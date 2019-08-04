@@ -5,6 +5,10 @@
  */
 package smf.gui;
 
+import net.sf.jasperreports.export.SimpleRtfReportConfiguration;
+import smf.controller.CtesJpaController;
+import smf.controller.FacturasJpaController;
+import smf.entity.Ctes;
 import smf.gui.cxpc.CuentasXCBPFrame;
 import smf.gui.contab.PlanCuentasFrame;
 import smf.gui.facte.AdminVentasFrame;
@@ -14,6 +18,7 @@ import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.TrayIcon.MessageType;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,7 +39,10 @@ import smf.gui.merc.CategoriaFrame;
 import smf.gui.merc.unid.UnidadesFrame;
 import smf.gui.reportes.ReportesFrame;
 import smf.gui.tickets.TicketsFrame;
+import smf.util.DatosUserSesion;
+import smf.util.EntityManagerUtil;
 import smf.util.EstadoAPP;
+import smf.util.ReadPropertiesUtil;
 
 /**
  *
@@ -43,6 +51,7 @@ import smf.util.EstadoAPP;
 public class SmartFactMain extends javax.swing.JFrame {
     private SplashScreen splashScreen;
     public static Map<String, EstadoAPP> estadosApp;
+    public static DatosUserSesion datosUserSesion;
     /**
      * Creates new form FarmaAppMain
      */
@@ -244,10 +253,9 @@ public class SmartFactMain extends javax.swing.JFrame {
         estadosApp = new HashMap<>();        
         //estadosApp.put(ArticulosFrame.class.getName(), createEstado(ArticulosFrame.class.getName(), 0));
         
-        estadosApp.put(FacturaVentaFrame.class.getName()+"1", createEstado(FacturaVentaFrame.class.getName(), 1));        
-        estadosApp.put(AdminVentasFrame.class.getName()+"1", createEstado(AdminVentasFrame.class.getName(), 1));    
-        estadosApp.put(CuentasXCBPFrame.class.getName()+"3", createEstado(CuentasXCBPFrame.class.getName(), 3));    
-        
+        estadosApp.put(FacturaVentaFrame.class.getName()+"1", createEstado(FacturaVentaFrame.class.getName(), 1));
+        estadosApp.put(AdminVentasFrame.class.getName()+"1", createEstado(AdminVentasFrame.class.getName(), 1));
+        estadosApp.put(CuentasXCBPFrame.class.getName()+"3", createEstado(CuentasXCBPFrame.class.getName(), 3));
         
         estadosApp.put(FacturaVentaFrame.class.getName()+"2", createEstado(FacturaVentaFrame.class.getName(), 2));
         estadosApp.put(AdminVentasFrame.class.getName()+"2", createEstado(AdminVentasFrame.class.getName(), 2));
@@ -962,6 +970,35 @@ public class SmartFactMain extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }
+
+    public static void readProperties() {
+
+        CtesJpaController ctesJpaController = new CtesJpaController(EntityManagerUtil.createEntityManagerFactory());
+        Ctes pathsys = ctesJpaController.findByClave("PATH_SYS");
+        if (pathsys != null) {
+            String pathToRead = pathsys.getCtesValor();
+            try {
+                SmartFactMain.datosUserSesion = ReadPropertiesUtil.getDatosUserSesion(pathToRead);
+                System.out.println(String.format("Valores del archivo de propiedaes: userid:%s, tdvid=%s",
+                        SmartFactMain.datosUserSesion.getUserId(),
+                        SmartFactMain.datosUserSesion.getTdvId()));
+            } catch (IOException ex) {
+                System.out.println(String.format("Error al leer el archivo de propiedades:%s", ex.getMessage()));
+                ex.printStackTrace();
+            }
+        } else {
+            System.out.println("Error al leer el paratmetro PATH_SYS, el valor es null");
+        }
+    }
+
+    public static DatosUserSesion getDatosUserSesion() {
+        return datosUserSesion;
+    }
+
+    public static void setDatosUserSesion(DatosUserSesion datosUserSesion) {
+        SmartFactMain.datosUserSesion = datosUserSesion;
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -972,8 +1009,14 @@ public class SmartFactMain extends javax.swing.JFrame {
         splashScreen.centerOnScreen();
         splashScreen.loadImage();
         splashScreen.setVisible(true);
-        
+
+        String pathSys = null;
+        if (args.length > 0) {
+            pathSys = args[0];
+        }
+
         SmartFactMain.initSystemTray();
+        SmartFactMain.readProperties();
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {

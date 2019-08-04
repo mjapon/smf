@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="VentasPorArticulo" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e3d47776-2b35-416b-bc22-bfd2fd1ed9bd">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="farmaciajj"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="202"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="789"/>
+	<parameter name="pdesde" class="java.util.Date"/>
+	<parameter name="phasta" class="java.util.Date"/>
+	<queryString language="SQL">
+		<![CDATA[select art.art_nombre, detf_cant, sum(detf_cant * detf_precio - detf_desc) as total  from detallesfact det
+join facturas fact on det.fact_id= fact.fact_id
+  join articulos art on det.art_id = art.art_id
+    where fact.tra_id = 1 and fact_valido = 0 and fact.fact_fecreg BETWEEN  $P{pdesde}  and  $P{phasta}
+GROUP BY  art.art_nombre,detf_cant   ORDER BY 2 desc]]>
+	</queryString>
+	<field name="art_nombre" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="art_nombre"/>
+	</field>
+	<field name="detf_cant" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="detf_cant"/>
+	</field>
+	<field name="total" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="total"/>
+	</field>
+	<group name="art_nombre">
+		<groupExpression><![CDATA[$F{art_nombre}]]></groupExpression>
+	</group>
+	<group name="detf_cant">
+		<groupExpression><![CDATA[$F{detf_cant}]]></groupExpression>
+	</group>
+	<group name="total">
+		<groupExpression><![CDATA[$F{total}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="57" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="460" height="40" uuid="6d5714cd-640d-4eb4-bd13-bbe73aa7fa97"/>
+				<textElement>
+					<font size="26"/>
+				</textElement>
+				<text><![CDATA[Reporte de ventas por artículos]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="5" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="25" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="190" height="20" uuid="d5f6ea0b-f30f-4f45-bf33-a8c1f9fd899f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="764aa972-410d-477f-8e52-6a96c0f4f44a"/>
+				</reportElement>
+				<text><![CDATA[Artículo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="190" y="2" width="100" height="20" uuid="4c253543-79b0-46e6-8ed0-58049325e53e">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1cd3595e-48ae-4712-ad53-81b8a1cf6205"/>
+				</reportElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="290" y="2" width="100" height="20" uuid="3edb0bca-551b-4de6-a473-701bb9b7bf45">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="667b93cf-1231-42c8-ac2e-2cb5322e46b3"/>
+				</reportElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="190" height="20" uuid="8290b535-50ae-42e5-beef-f424a92c042d">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="764aa972-410d-477f-8e52-6a96c0f4f44a"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{art_nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="2" width="100" height="18" uuid="ebe34658-d259-4f73-9628-f339409489c9">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="1cd3595e-48ae-4712-ad53-81b8a1cf6205"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{detf_cant}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="290" y="2" width="100" height="18" uuid="01c1a46b-5c2a-4696-be13-e92b6c0eb3d6">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="667b93cf-1231-42c8-ac2e-2cb5322e46b3"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="219" splitType="Stretch">
+			<bar3DChart>
+				<chart evaluationTime="Report">
+					<reportElement x="0" y="10" width="540" height="200" uuid="a6230a42-fe8f-4b64-88eb-89c91620523e"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend position="Bottom"/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Ventas x Articulo"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{art_nombre}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{total}]]></valueExpression>
+						<labelExpression><![CDATA["label art"]]></labelExpression>
+					</categorySeries>
+				</categoryDataset>
+				<bar3DPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</bar3DPlot>
+			</bar3DChart>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="10" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="6" splitType="Stretch"/>
+	</summary>
+</jasperReport>

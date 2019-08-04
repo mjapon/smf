@@ -23,11 +23,7 @@ import smf.entity.Caja;
 import smf.gui.BaseFrame;
 import smf.gui.SmartFactMain;
 import smf.gui.facte.DetallesFacturaFrame;
-import smf.util.FechasUtil;
-import smf.util.NumbersUtil;
-import smf.util.ParamBusquedaCXCP;
-import smf.util.ParamsBusquedaTransacc;
-import smf.util.SelectingEditor;
+import smf.util.*;
 import smf.util.datamodels.CierreCajaDM;
 import smf.util.datamodels.DefGSVCol;
 import smf.util.datamodels.JTableColumn;
@@ -38,69 +34,71 @@ import smf.util.datamodels.rows.FilaDatosCaja;
 import smf.util.datamodels.rows.FilaVenta;
 
 /**
- *
  * @author mjapon
  */
 public class CierrCajaFrame extends BaseFrame {
 
     private FacturasJpaController facturaController;
     private CajaJpaController cajaJpaController;
-    
-    private MovsCVDataModel movsVentasDataModel;    
+
+    private MovsCVDataModel movsVentasDataModel;
     private MovsCVDataModel movsComprasDataModel;
     private MovsCXCPDataModel movsCXCDataModel;
     private MovsCXCPDataModel movsCXPDataModel;
-    
+
     private CierreCajaDM cierreCajaDM;
-    
-    private Integer idCajaSel;    
-    
+
+    private Integer idCajaSel;
+
     private List<JTableColumn> columns;
-    
+
+    private DatosUserSesion datosUserSesion;
+
     /**
      * Creates new form CierrCajaFrame
      */
     public CierrCajaFrame(Integer idCajaSel) {
         initComponents();
-        
+
         this.idCajaSel = idCajaSel;
         facturaController = new FacturasJpaController(em);
         cajaJpaController = new CajaJpaController(em);
-        
+
         setupTableVentas();
         setupTableCompras();
         setupTableAbonosCobrados();
         setupTableAbonosPagados();
-        
+
         columns = new ArrayList<>();
-        
+
         setupTableResumenDia();
         cierreCajaDM = new CierreCajaDM(columns, cajaJpaController);
         jTableResumenDia.setModel(cierreCajaDM);
-        
-        
-        TableColumn colMonto = jTableResumenDia.getColumnModel().getColumn( 6 );
+
+
+        TableColumn colMonto = jTableResumenDia.getColumnModel().getColumn(6);
         SelectingEditor selectingEditor = new SelectingEditor(new JTextField());
-        colMonto.setCellEditor(selectingEditor);        
+        colMonto.setCellEditor(selectingEditor);
+
+        datosUserSesion = SmartFactMain.getDatosUserSesion();
     }
-    
-    public void setupTableVentas(){
+
+    public void setupTableVentas() {
         movsVentasDataModel = new MovsCVDataModel();
         movsVentasDataModel.setController(facturaController);
-        jTableVentas.setModel(movsVentasDataModel);        
+        jTableVentas.setModel(movsVentasDataModel);
         jTableVentas.getTableHeader().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int col = jTableVentas.columnAtPoint(e.getPoint());
-                try{
-                    for (int i=0; i<movsVentasDataModel.getColumnCount();i++){
-                        jTableVentas.getColumnModel().getColumn(i).setHeaderValue( movsVentasDataModel.getColumnName(i) );
-                    }                    
-                    movsVentasDataModel.switchSortColumn(col);                    
-                }
-                catch(Throwable ex){
-                    JOptionPane.showMessageDialog(null, "Error en sort:"+ex.getMessage());
-                    System.out.println("Error en sort:"+ex.getMessage());
+                try {
+                    for (int i = 0; i < movsVentasDataModel.getColumnCount(); i++) {
+                        jTableVentas.getColumnModel().getColumn(i).setHeaderValue(movsVentasDataModel.getColumnName(i));
+                    }
+                    movsVentasDataModel.switchSortColumn(col);
+                } catch (Throwable ex) {
+                    JOptionPane.showMessageDialog(null, "Error en sort:" + ex.getMessage());
+                    System.out.println("Error en sort:" + ex.getMessage());
                     ex.printStackTrace();
                 }
             }
@@ -114,24 +112,23 @@ public class CierrCajaFrame extends BaseFrame {
         });
         jTableVentas.updateUI();
     }
-    
-    public void setupTableCompras(){
+
+    public void setupTableCompras() {
         movsComprasDataModel = new MovsCVDataModel();
         movsComprasDataModel.setController(facturaController);
-        jTableCompras.setModel(movsComprasDataModel);        
+        jTableCompras.setModel(movsComprasDataModel);
         jTableCompras.getTableHeader().addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int col = jTableCompras.columnAtPoint(e.getPoint());
-                try{
-                    for (int i=0; i<movsComprasDataModel.getColumnCount();i++){
-                        jTableCompras.getColumnModel().getColumn(i).setHeaderValue( movsComprasDataModel.getColumnName(i) );
-                    }                    
-                    movsComprasDataModel.switchSortColumn(col);                    
-                }
-                catch(Throwable ex){
-                    JOptionPane.showMessageDialog(null, "Error en sort:"+ex.getMessage());
-                    System.out.println("Error en sort:"+ex.getMessage());
+                try {
+                    for (int i = 0; i < movsComprasDataModel.getColumnCount(); i++) {
+                        jTableCompras.getColumnModel().getColumn(i).setHeaderValue(movsComprasDataModel.getColumnName(i));
+                    }
+                    movsComprasDataModel.switchSortColumn(col);
+                } catch (Throwable ex) {
+                    JOptionPane.showMessageDialog(null, "Error en sort:" + ex.getMessage());
+                    System.out.println("Error en sort:" + ex.getMessage());
                     ex.printStackTrace();
                 }
             }
@@ -144,10 +141,10 @@ public class CierrCajaFrame extends BaseFrame {
             }
         });
         jTableCompras.updateUI();
-        
+
     }
-    
-    public void setupTableAbonosCobrados(){
+
+    public void setupTableAbonosCobrados() {
         movsCXCDataModel = new MovsCXCPDataModel(3);
         movsCXCDataModel.setController(facturaController);
         jTableCxC.setModel(movsCXCDataModel);
@@ -155,15 +152,14 @@ public class CierrCajaFrame extends BaseFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int col = jTableCxC.columnAtPoint(e.getPoint());
-                try{
-                    for (int i=0; i<movsCXCDataModel.getColumnCount();i++){
-                        jTableCxC.getColumnModel().getColumn(i).setHeaderValue( movsCXCDataModel.getColumnName(i) );
+                try {
+                    for (int i = 0; i < movsCXCDataModel.getColumnCount(); i++) {
+                        jTableCxC.getColumnModel().getColumn(i).setHeaderValue(movsCXCDataModel.getColumnName(i));
                     }
                     movsCXCDataModel.switchSortColumn(col);
-                }
-                catch(Throwable ex){
-                    JOptionPane.showMessageDialog(null, "Error en sort:"+ex.getMessage());
-                    System.out.println("Error en sort:"+ex.getMessage());
+                } catch (Throwable ex) {
+                    JOptionPane.showMessageDialog(null, "Error en sort:" + ex.getMessage());
+                    System.out.println("Error en sort:" + ex.getMessage());
                     ex.printStackTrace();
                 }
             }
@@ -175,11 +171,11 @@ public class CierrCajaFrame extends BaseFrame {
                 }
             }
         });
-        jTableCxC.updateUI();        
+        jTableCxC.updateUI();
     }
-    
-    public void setupTableAbonosPagados(){
-        
+
+    public void setupTableAbonosPagados() {
+
         //Configuracion de cuentas x pagar
         movsCXPDataModel = new MovsCXCPDataModel(4);
         movsCXPDataModel.setController(facturaController);
@@ -188,15 +184,14 @@ public class CierrCajaFrame extends BaseFrame {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int col = jTableCxP.columnAtPoint(e.getPoint());
-                try{
-                    for (int i=0; i<movsCXPDataModel.getColumnCount();i++){
-                        jTableCxP.getColumnModel().getColumn(i).setHeaderValue( movsCXPDataModel.getColumnName(i) );
-                    }                    
+                try {
+                    for (int i = 0; i < movsCXPDataModel.getColumnCount(); i++) {
+                        jTableCxP.getColumnModel().getColumn(i).setHeaderValue(movsCXPDataModel.getColumnName(i));
+                    }
                     movsCXPDataModel.switchSortColumn(col);
-                }
-                catch(Throwable ex){
-                    JOptionPane.showMessageDialog(null, "Error en sort:"+ex.getMessage());
-                    System.out.println("Error en sort:"+ex.getMessage());
+                } catch (Throwable ex) {
+                    JOptionPane.showMessageDialog(null, "Error en sort:" + ex.getMessage());
+                    System.out.println("Error en sort:" + ex.getMessage());
                     ex.printStackTrace();
                 }
             }
@@ -209,65 +204,59 @@ public class CierrCajaFrame extends BaseFrame {
             }
         });
         jTableCxP.updateUI();
-        
-    }    
-    
-    public void showDetallesFacturaFrame(Integer traCodigo){
+
+    }
+
+    public void showDetallesFacturaFrame(Integer traCodigo) {
         System.out.println("Select action");
         int row = this.jTableVentas.getSelectedRow();
-        if (traCodigo == 2){
+        if (traCodigo == 2) {
             row = this.jTableCompras.getSelectedRow();
-        }
-        else if (traCodigo == 3){
+        } else if (traCodigo == 3) {
             row = this.jTableCxC.getSelectedRow();
-        }
-        else if (traCodigo == 4){
+        } else if (traCodigo == 4) {
             row = this.jTableCxP.getSelectedRow();
         }
-        
-        if (row>-1){            
-            if (traCodigo == 1 || traCodigo ==2){
+
+        if (row > -1) {
+            if (traCodigo == 1 || traCodigo == 2) {
                 FilaVenta filart = null;
-                if (traCodigo == 1){
+                if (traCodigo == 1) {
                     filart = this.movsVentasDataModel.getValueAt(row);
-                }
-                else if (traCodigo == 2){
+                } else if (traCodigo == 2) {
                     filart = this.movsComprasDataModel.getValueAt(row);
                 }
                 DetallesFacturaFrame detallesFacturaFrame = new DetallesFacturaFrame(filart.getVentaId());
                 Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-                detallesFacturaFrame.setLocation((dim.width/2)-(this.getSize().width/2), (dim.height/2)-(this.getSize().height/2));
+                detallesFacturaFrame.setLocation((dim.width / 2) - (this.getSize().width / 2), (dim.height / 2) - (this.getSize().height / 2));
                 detallesFacturaFrame.setSize(900, 500);
                 detallesFacturaFrame.setVisible(true);
-            }
-            else if (traCodigo == 3 || traCodigo ==4){
+            } else if (traCodigo == 3 || traCodigo == 4) {
                 FilaCXCP filaCXCP = null;
-                if (traCodigo == 3){
+                if (traCodigo == 3) {
                     filaCXCP = this.movsCXCDataModel.getValueAt(row);
-                }
-                else if (traCodigo == 4){
+                } else if (traCodigo == 4) {
                     filaCXCP = this.movsCXPDataModel.getValueAt(row);
                 }
-                
+
                 DetallesFacturaFrame detallesFacturaFrame = new DetallesFacturaFrame(filaCXCP.getCodFactura());
                 Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-                detallesFacturaFrame.setLocation((dim.width/2)-(this.getSize().width/2), (dim.height/2)-(this.getSize().height/2));            
+                detallesFacturaFrame.setLocation((dim.width / 2) - (this.getSize().width / 2), (dim.height / 2) - (this.getSize().height / 2));
                 detallesFacturaFrame.setSize(900, 500);
                 detallesFacturaFrame.setVisible(true);
             }
-        }    
-        else{
+        } else {
             JOptionPane.showMessageDialog(this, "Debe seleccionar la factura");
         }
     }
-    
-    public void setupTableResumenDia(){
-        
+
+    public void setupTableResumenDia() {
+
         columns.add(
                 new JTableColumn<FilaDatosCaja>(
-                        0, 
-                        "CAJA", 
-                        "caja", 
+                        0,
+                        "CAJA",
+                        "caja",
                         String.class,
                         new DefGSVCol<FilaDatosCaja>() {
                             public Object getValueAt(FilaDatosCaja row, int rowIndex) {
@@ -276,26 +265,26 @@ public class CierrCajaFrame extends BaseFrame {
                         }
                 )
         );
-        
+
         columns.add(
                 new JTableColumn<FilaDatosCaja>(
-                        1, 
-                        "SALDO INICIAL(+)", 
-                        "saldoInicial", 
+                        1,
+                        "SALDO INICIAL(+)",
+                        "saldoInicial",
                         BigDecimal.class,
                         new DefGSVCol<FilaDatosCaja>() {
                             public Object getValueAt(FilaDatosCaja row, int rowIndex) {
-                                return NumbersUtil.round2(row.getSaldoInicial() );
+                                return NumbersUtil.round2(row.getSaldoInicial());
                             }
                         }
                 )
         );
-        
+
         columns.add(
                 new JTableColumn<FilaDatosCaja>(
-                        2, 
-                        "VENTAS(+)", 
-                        "ventas", 
+                        2,
+                        "VENTAS(+)",
+                        "ventas",
                         BigDecimal.class,
                         new DefGSVCol<FilaDatosCaja>() {
                             public Object getValueAt(FilaDatosCaja row, int rowIndex) {
@@ -304,12 +293,12 @@ public class CierrCajaFrame extends BaseFrame {
                         }
                 )
         );
-        
-         columns.add(
+
+        columns.add(
                 new JTableColumn<FilaDatosCaja>(
-                        3, 
-                        "COMPRAS(-)", 
-                        "compras", 
+                        3,
+                        "COMPRAS(-)",
+                        "compras",
                         BigDecimal.class,
                         new DefGSVCol<FilaDatosCaja>() {
                             public Object getValueAt(FilaDatosCaja row, int rowIndex) {
@@ -318,12 +307,12 @@ public class CierrCajaFrame extends BaseFrame {
                         }
                 )
         );
-         
+
         columns.add(
                 new JTableColumn<FilaDatosCaja>(
-                        4, 
-                        "ABN COBRADOS(+)", 
-                        "abocob", 
+                        4,
+                        "ABN COBRADOS(+)",
+                        "abocob",
                         BigDecimal.class,
                         new DefGSVCol<FilaDatosCaja>() {
                             public Object getValueAt(FilaDatosCaja row, int rowIndex) {
@@ -332,12 +321,12 @@ public class CierrCajaFrame extends BaseFrame {
                         }
                 )
         );
-        
+
         columns.add(
                 new JTableColumn<FilaDatosCaja>(
-                        5, 
-                        "ABN PAGADOS(-)", 
-                        "abopag", 
+                        5,
+                        "ABN PAGADOS(-)",
+                        "abopag",
                         BigDecimal.class,
                         new DefGSVCol<FilaDatosCaja>() {
                             public Object getValueAt(FilaDatosCaja row, int rowIndex) {
@@ -346,12 +335,12 @@ public class CierrCajaFrame extends BaseFrame {
                         }
                 )
         );
-        
+
         columns.add(
                 new JTableColumn<FilaDatosCaja>(
-                        6, 
-                        "AJUSTE(+/-)", 
-                        "ajuste", 
+                        6,
+                        "AJUSTE(+/-)",
+                        "ajuste",
                         BigDecimal.class,
                         new DefGSVCol<FilaDatosCaja>() {
                             public Object getValueAt(FilaDatosCaja row, int rowIndex) {
@@ -365,20 +354,19 @@ public class CierrCajaFrame extends BaseFrame {
 
                             @Override
                             public void setValueAt(FilaDatosCaja row, int rowIndex, Object value) {
-                                try{
+                                try {
                                     row.setValorAjuste(new BigDecimal(value.toString()));
                                     BigDecimal saldoFinal = row.getSaldoInicial()
-                                                            .add(row.getTotalVentas())
-                                                            .subtract(row.getTotalCompras())
-                                                            .add(row.getTotalAbCobrados())
-                                                            .subtract(row.getTotalAbPagados());
-                                    
+                                            .add(row.getTotalVentas())
+                                            .subtract(row.getTotalCompras())
+                                            .add(row.getTotalAbCobrados())
+                                            .subtract(row.getTotalAbPagados());
+
                                     BigDecimal newSaldoFinal = saldoFinal.add(row.getValorAjuste());
-                                    row.setSaldoFinal( newSaldoFinal );
-                                    
-                                    cierreCajaDM.fireTableDataChanged();                                    
-                                }
-                                catch(Throwable ex){
+                                    row.setSaldoFinal(newSaldoFinal);
+
+                                    cierreCajaDM.fireTableDataChanged();
+                                } catch (Throwable ex) {
                                     row.setValorAjuste(BigDecimal.ZERO);
                                     showMsgError(ex);
                                 }
@@ -386,12 +374,12 @@ public class CierrCajaFrame extends BaseFrame {
                         }
                 )
         );
-        
+
         columns.add(
                 new JTableColumn<FilaDatosCaja>(
-                        7, 
-                        "TOTAL", 
-                        "total", 
+                        7,
+                        "TOTAL",
+                        "total",
                         BigDecimal.class,
                         new DefGSVCol<FilaDatosCaja>() {
                             public Object getValueAt(FilaDatosCaja row, int rowIndex) {
@@ -400,115 +388,128 @@ public class CierrCajaFrame extends BaseFrame {
                         }
                 )
         );
-        
+
     }
-    
-    public void loadLastOpenedCaja(){
-        if (this.idCajaSel == null || this.idCajaSel == 0){
-            Caja theCaja = cajaJpaController.getLastOpenedCaja();
-            if (theCaja != null){
+
+    public void loadLastOpenedCaja() {
+        if (this.idCajaSel == null || this.idCajaSel == 0) {
+            Caja theCaja = cajaJpaController.getLastOpenedCaja(datosUserSesion.getTdvId());
+            if (theCaja != null) {
                 this.idCajaSel = theCaja.getCjId();
                 loadDatosCaja(theCaja);
-            }
-            else{
+            } else {
                 showMsg(" No existe apertura de caja, primero debe apertura la caja para poder cerrarla!!! ");
                 setVisible(false);
             }
         }
     }
-    
-    public void loadDatosCaja(Caja caja){
-        try{
+
+    public void loadDatosCaja(Caja caja) {
+        try {
             Date desde = caja.getCjFecaper();
             Date hasta = new Date();
-            if (idCajaSel > 0){
+            if (idCajaSel > 0) {
                 hasta = caja.getCjFeccierre();
-            }            
-            
-            if (caja.getCjEstado() == 0){
+            }
+
+            if (caja.getCjEstado() == 0) {
                 jBtnCerrarCaja.setEnabled(true);
                 jLabelFC.setVisible(false);
                 jTFFechaCierre.setVisible(false);
-            }
-            else{
+            } else {
                 jBtnCerrarCaja.setEnabled(false);
                 jLabelFC.setVisible(true);
                 jTFFechaCierre.setVisible(true);
-                jTFFechaCierre.setText( FechasUtil.formatDateHour(hasta) );
-                
+                jTFFechaCierre.setText(FechasUtil.formatDateHour(hasta));
+
             }
             String estado = "ABIERTO";
-            switch(caja.getCjEstado()){
-                case 0:{estado="ABIERTO"; break;}
-                case 1:{estado="CERRADO"; break;}
-                case 2:{estado="ANULADO"; break;}
-                default:{estado="";break;}
+            switch (caja.getCjEstado()) {
+                case 0: {
+                    estado = "ABIERTO";
+                    break;
+                }
+                case 1: {
+                    estado = "CERRADO";
+                    break;
+                }
+                case 2: {
+                    estado = "ANULADO";
+                    break;
+                }
+                default: {
+                    estado = "";
+                    break;
+                }
             }
-            
-            jTFEstado.setText( estado );
-            
+
+            jTFEstado.setText(estado);
+
             //Load ventas
             ParamsBusquedaTransacc paramsVentas = new ParamsBusquedaTransacc();
             paramsVentas.initForTransacc(desde, hasta, 1);
+            paramsVentas.setTdvId(this.datosUserSesion.getTdvId());
             movsVentasDataModel.setParams(paramsVentas);
             movsVentasDataModel.loadFromDataBase();
-            Map<Integer, BigDecimal> mapVentasByCaja = movsVentasDataModel.getTotalesVentasModel().getSumasCajaMap(); 
-            
+            Map<Integer, BigDecimal> mapVentasByCaja = movsVentasDataModel.getTotalesVentasModel().getSumasCajaMap();
+
             jTableVentas.updateUI();
-            jPanelVentas.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ventas("+movsVentasDataModel.getItems().size() +")"  , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
-            
+            jPanelVentas.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Ventas(" + movsVentasDataModel.getItems().size() + ")", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
+
             //Load compras
             ParamsBusquedaTransacc paramsCompras = new ParamsBusquedaTransacc();
             paramsCompras.initForTransacc(desde, hasta, 2);
+            paramsCompras.setTdvId(this.datosUserSesion.getTdvId());
             movsComprasDataModel.setParams(paramsCompras);
             movsComprasDataModel.loadFromDataBase();
-            Map<Integer, BigDecimal> mapComprasByCaja = movsComprasDataModel.getTotalesVentasModel().getSumasCajaMap(); 
+            Map<Integer, BigDecimal> mapComprasByCaja = movsComprasDataModel.getTotalesVentasModel().getSumasCajaMap();
             jTableCompras.updateUI();
-            jPanelCompras.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Compras("+movsComprasDataModel.getItems().size() +")"  , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
-            
+            jPanelCompras.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Compras(" + movsComprasDataModel.getItems().size() + ")", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
+
             //Load abonos cobrados
             ParamBusquedaCXCP paramsCXC = new ParamBusquedaCXCP();
             paramsCXC.initForTransacc(desde, hasta, 3);
+            paramsCXC.setTdvId(this.datosUserSesion.getTdvId());
             movsCXCDataModel.setParams(paramsCXC);
             movsCXCDataModel.loadFromDataBase();
             Map<Integer, BigDecimal> mapSumaMovsCXCByCaja = movsCXCDataModel.getTotalesFactura().getTotalByCajaMap();
-            jTableCxC.updateUI();            
-            jPanelCXC.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Abonos Cobrados("+movsCXCDataModel.getItems().size() +")"  , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
-            
+            jTableCxC.updateUI();
+            jPanelCXC.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Abonos Cobrados(" + movsCXCDataModel.getItems().size() + ")", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
+
             //load abonos pagados
             ParamBusquedaCXCP paramsCXP = new ParamBusquedaCXCP();
             paramsCXP.initForTransacc(desde, hasta, 4);
+            paramsCXP.setTdvId(this.datosUserSesion.getTdvId());
             movsCXPDataModel.setParams(paramsCXP);
             movsCXPDataModel.loadFromDataBase();
             Map<Integer, BigDecimal> mapSumaMovsCXPByCaja = movsCXPDataModel.getTotalesFactura().getTotalByCajaMap();
             jTableCxP.updateUI();
-            jPanelCxP.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Abonos Pagados("+movsCXPDataModel.getItems().size() +")"  , javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
-            
+            jPanelCxP.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Abonos Pagados(" + movsCXPDataModel.getItems().size() + ")", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 14))); // NOI18N
+
             cierreCajaDM.setCaja(caja);
             cierreCajaDM.setTotalesVentas(movsVentasDataModel.getTotalesVentasModel());
             cierreCajaDM.setTotalesCompras(movsComprasDataModel.getTotalesVentasModel());
             cierreCajaDM.setTotalesCXC(movsCXCDataModel.getTotalesFactura());
             cierreCajaDM.setTotalesCXP(movsCXPDataModel.getTotalesFactura());
-            
-            jTFTotalVGrid.setText( NumbersUtil.round2ToStr( movsVentasDataModel.getTotalesVentasModel().getSumaEfectivo() ) );
-            jTFTotalCGrid.setText( NumbersUtil.round2ToStr( movsComprasDataModel.getTotalesVentasModel().getSumaEfectivo() ) );
-            
-            jTFTotalACGrid.setText( NumbersUtil.round2ToStr( movsCXCDataModel.getTotalesFactura().getSumaMonto() ) );
-            jTFTotalAPGrid.setText( NumbersUtil.round2ToStr( movsCXPDataModel.getTotalesFactura().getSumaMonto() ) );
-            
+
+            jTFTotalVGrid.setText(NumbersUtil.round2ToStr(movsVentasDataModel.getTotalesVentasModel().getSumaEfectivo()));
+            jTFTotalCGrid.setText(NumbersUtil.round2ToStr(movsComprasDataModel.getTotalesVentasModel().getSumaEfectivo()));
+
+            jTFTotalACGrid.setText(NumbersUtil.round2ToStr(movsCXCDataModel.getTotalesFactura().getSumaMonto()));
+            jTFTotalAPGrid.setText(NumbersUtil.round2ToStr(movsCXPDataModel.getTotalesFactura().getSumaMonto()));
+
             cierreCajaDM.loadFromDataBase();
             jTableResumenDia.updateUI();
-            
-            jTFFechaApertura.setText( FechasUtil.formatDateHour(caja.getCjFecaper()) );
-            jTAObsApertura.setText( caja.getCjObsaper() );
-            jTFNroCaja.setText( caja.getCjId().toString() );
-            
-        }
-        catch(Throwable ex){
+
+            jTFFechaApertura.setText(FechasUtil.formatDateHour(caja.getCjFecaper()));
+            jTAObsApertura.setText(caja.getCjObsaper());
+            jTFNroCaja.setText(caja.getCjId().toString());
+
+        } catch (Throwable ex) {
             showMsgError(ex);
         }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -595,15 +596,15 @@ public class CierrCajaFrame extends BaseFrame {
 
         jTableResumenDia.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jTableResumenDia.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
+                new Object[][]{
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null}
+                },
+                new String[]{
+                        "Title 1", "Title 2", "Title 3", "Title 4"
+                }
         ));
         jTableResumenDia.setRowHeight(28);
         jScrollPane4.setViewportView(jTableResumenDia);
@@ -622,15 +623,15 @@ public class CierrCajaFrame extends BaseFrame {
 
         jTableVentas.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jTableVentas.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
+                new Object[][]{
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null}
+                },
+                new String[]{
+                        "Title 1", "Title 2", "Title 3", "Title 4"
+                }
         ));
         jScrollPane1.setViewportView(jTableVentas);
 
@@ -661,15 +662,15 @@ public class CierrCajaFrame extends BaseFrame {
 
         jTableCompras.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jTableCompras.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
+                new Object[][]{
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null}
+                },
+                new String[]{
+                        "Title 1", "Title 2", "Title 3", "Title 4"
+                }
         ));
         jScrollPane7.setViewportView(jTableCompras);
 
@@ -700,15 +701,15 @@ public class CierrCajaFrame extends BaseFrame {
 
         jTableCxC.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jTableCxC.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
+                new Object[][]{
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null}
+                },
+                new String[]{
+                        "Title 1", "Title 2", "Title 3", "Title 4"
+                }
         ));
         jScrollPane2.setViewportView(jTableCxC);
 
@@ -739,15 +740,15 @@ public class CierrCajaFrame extends BaseFrame {
 
         jTableCxP.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jTableCxP.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
+                new Object[][]{
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null},
+                        {null, null, null, null}
+                },
+                new String[]{
+                        "Title 1", "Title 2", "Title 3", "Title 4"
+                }
         ));
         jScrollPane3.setViewportView(jTableCxP);
 
@@ -905,29 +906,27 @@ public class CierrCajaFrame extends BaseFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonUpdValActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUpdValActionPerformed
-        try{
+        try {
             Caja caja = cajaJpaController.findById(this.idCajaSel);
             loadDatosCaja(caja);
-        }
-        catch(Throwable ex){
+        } catch (Throwable ex) {
             showMsgError(ex);
         }
     }//GEN-LAST:event_jButtonUpdValActionPerformed
-    
-    public void loadDatosCajaId(){
-         Caja caja = cajaJpaController.findById(this.idCajaSel);
-         loadDatosCaja(caja);
+
+    public void loadDatosCajaId() {
+        Caja caja = cajaJpaController.findById(this.idCajaSel);
+        loadDatosCaja(caja);
     }
-    
+
     private void jBtnCerrarCajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCerrarCajaActionPerformed
-        try{
-            if (showConfirmMsg("¿Esta seguro, ya no podra realizar ventas?")){
+        try {
+            if (showConfirmMsg("¿Esta seguro, ya no podra realizar ventas?")) {
                 cajaJpaController.cerrarCaja(this.idCajaSel, jTAObsCierre.getText(), cierreCajaDM.getItems());
                 SmartFactMain.showSystemTrayMsg("La caja a sido cerrada exitosamente");
                 setVisible(false);
             }
-        }
-        catch(Throwable ex){
+        } catch (Throwable ex) {
             showMsgError(ex);
         }
 
@@ -953,7 +952,7 @@ public class CierrCajaFrame extends BaseFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTFTotalCGridActionPerformed
 
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jBtnCerrarCaja;
     private javax.swing.JButton jButtonCerrar;

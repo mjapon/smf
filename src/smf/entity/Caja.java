@@ -77,8 +77,8 @@ public class Caja implements Serializable {
     private Date cjFeccierre;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "cjId")
     private Collection<Cajadet> cajadetCollection;
-    
-    
+    @Column(name = "tdv_id")
+    private Integer tdvId;
 
     public Caja() {
     }
@@ -183,7 +183,9 @@ public class Caja implements Serializable {
         this.cajadetCollection = cajadetCollection;
     }
 
-    
+
+
+
 
     @Override
     public int hashCode() {
@@ -209,5 +211,12 @@ public class Caja implements Serializable {
     public String toString() {
         return "jj.entity.Caja[ cjId=" + cjId + " ]";
     }
-    
+
+    public Integer getTdvId() {
+        return tdvId;
+    }
+
+    public void setTdvId(Integer tdvId) {
+        this.tdvId = tdvId;
+    }
 }

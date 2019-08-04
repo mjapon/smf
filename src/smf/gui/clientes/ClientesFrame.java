@@ -331,13 +331,13 @@ public class ClientesFrame extends BaseFrame implements IParenCliFrame{
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableMain = new javax.swing.JTable();
-        btnHistServ1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabelTit = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jTFFiltro = new javax.swing.JTextField();
         jBtnBuscar = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
+        btnHistServ1 = new javax.swing.JButton();
         btnHistServ = new javax.swing.JButton();
         btnFacturar = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
@@ -370,16 +370,6 @@ public class ClientesFrame extends BaseFrame implements IParenCliFrame{
         jScrollPane1.setViewportView(jTableMain);
 
         jPanel1.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
-        btnHistServ1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
-        btnHistServ1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/Plus_25px.png"))); // NOI18N
-        btnHistServ1.setText("Nuevo");
-        btnHistServ1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnHistServ1ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnHistServ1, java.awt.BorderLayout.PAGE_START);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
 
@@ -417,6 +407,16 @@ public class ClientesFrame extends BaseFrame implements IParenCliFrame{
         getContentPane().add(jPanel2, java.awt.BorderLayout.NORTH);
 
         jPanel3.setLayout(new java.awt.GridLayout(8, 1));
+
+        btnHistServ1.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        btnHistServ1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/Plus_25px.png"))); // NOI18N
+        btnHistServ1.setText("Nuevo");
+        btnHistServ1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnHistServ1ActionPerformed(evt);
+            }
+        });
+        jPanel3.add(btnHistServ1);
 
         btnHistServ.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
         btnHistServ.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/icons8-view_details.png"))); // NOI18N

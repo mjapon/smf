@@ -26,6 +26,7 @@ public class ParamBusquedaCXCP {
     private String filtro;
     private Integer cajaId;
     private boolean findByCaja;
+    private Integer tdvId;
 
     public ParamBusquedaCXCP() {
         
@@ -139,8 +140,13 @@ public class ParamBusquedaCXCP {
     public void setFindByCaja(boolean findByCaja) {
         this.findByCaja = findByCaja;
     }
-    
-    
-    
-    
+
+
+    public Integer getTdvId() {
+        return tdvId;
+    }
+
+    public void setTdvId(Integer tdvId) {
+        this.tdvId = tdvId;
+    }
 }

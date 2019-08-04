@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listadeinventarios" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="97c7a4e2-7c00-4541-88bc-d0ea693562bf">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="FarmaJJPostgresDataAdap"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="219"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="770"/>
+	<queryString language="SQL">
+		<![CDATA[select art.art_codbar, case when art.art_tipo = 'S' then 'Servicio' else 'Artículo' end as tipo, art.art_nombre, art.art_inv,
+  case when art.art_iva = true then 'Si' else 'No' end as iva,
+  coalesce(p.cli_nombres,'')||' '||coalesce(p.cli_apellidos,'') as proveedor,
+  art.art_precio, art.art_preciocompra, art.art_preciomin, cat.cat_name as categoria, catcaja.cc_nombre as caja
+from articulos art
+left join clientes p on p.cli_id = art.prov_id
+left join categorias cat on art.cat_id = cat.cat_id
+left join catcajas catcaja on cat.cat_caja = catcaja.cc_id order by proveedor, art.art_nombre]]>
+	</queryString>
+	<field name="art_codbar" class="java.lang.String"/>
+	<field name="tipo" class="java.lang.String"/>
+	<field name="art_nombre" class="java.lang.String"/>
+	<field name="art_inv" class="java.math.BigDecimal"/>
+	<field name="iva" class="java.lang.String"/>
+	<field name="proveedor" class="java.lang.String"/>
+	<field name="art_precio" class="java.math.BigDecimal"/>
+	<field name="art_preciocompra" class="java.math.BigDecimal"/>
+	<field name="art_preciomin" class="java.math.BigDecimal"/>
+	<field name="categoria" class="java.lang.String"/>
+	<field name="caja" class="java.lang.String"/>
+	<group name="proveedor">
+		<groupExpression><![CDATA[$F{proveedor}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="48" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="10" width="545" height="30" uuid="4a101796-a734-48f2-a0c9-cb1d38c46f5b"/>
+				<textElement>
+					<font fontName="Arial" size="20" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Reporte de inventarios]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="696" y="25" width="100" height="14" uuid="c9e2b3af-f8e1-43c8-ae99-e19b3b24f85d"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="580" y="25" width="115" height="15" uuid="824e08df-1a88-4853-9468-0f17283c4f7e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Fecha del reporte:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="12" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="100" height="20" uuid="dc649685-a5b3-47ba-8116-318ab620dcf1"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Código]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="100" y="0" width="120" height="20" uuid="58708a55-7945-4699-b32c-f0da43e8ddb0"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Nombre]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="220" y="0" width="100" height="20" uuid="9a4c8e6d-1176-4fdc-b711-f688e8e33062"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Inv.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="320" y="0" width="40" height="20" uuid="80f61a58-1647-413f-969a-ad2eba775cd0"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Iva]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="0" width="100" height="20" uuid="27bf624c-65f4-4b49-afa4-9d4a440b0b08"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="0" width="80" height="20" uuid="636ff07f-251f-4ca9-baa4-7107c46cff92"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Precio V.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="540" y="0" width="80" height="20" uuid="b40a26df-6632-4263-9a5f-31ce3e70844f"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Precio C.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="620" y="0" width="100" height="20" uuid="328bda60-5a35-4bd8-a6c5-2d1ad58a5d06"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Categoría]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="722" y="0" width="100" height="20" uuid="50169de6-6ece-4838-9f35-03256a870338"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Caja]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="25" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="59a1d500-bd3c-42bc-b2eb-f1f6e7d911d3"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{art_codbar}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="0" width="120" height="20" uuid="cb93d9a7-de93-4c8b-9f9c-092ff945b9c1"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{art_nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="220" y="0" width="100" height="20" uuid="eafed5df-f1e9-4051-88e6-42a0571736c1"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{art_inv}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="320" y="0" width="40" height="20" uuid="3516802d-395b-413e-a46f-f7de0f0edf87"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{iva}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="360" y="0" width="100" height="20" uuid="8ce6fe9d-4468-4bc2-abcc-3f6b14316af0"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{proveedor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="0" width="80" height="20" uuid="e694ec58-9b9c-4350-ba32-13fb999a88ae"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{art_precio}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="540" y="0" width="80" height="20" uuid="c0bd3491-5d99-47de-b420-76d56a9475b7"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{art_preciocompra}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="620" y="0" width="100" height="20" uuid="1de0a5b1-f21e-499d-8af1-bff0f477d9e9"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{categoria}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="720" y="0" width="100" height="20" uuid="f12ec141-087d-4f21-8cd8-7d25a8d4c158"/>
+				<textElement>
+					<font fontName="Arial"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{caja}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="19" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="50" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="33" splitType="Stretch"/>
+	</summary>
+</jasperReport>

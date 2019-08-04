@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="listaclientes" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aa87b358-2946-4eed-8684-56150402ce44">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<queryString language="SQL">
+		<![CDATA[select c.cli_ci, c.cli_nombres, coalesce(c.cli_apellidos,'') as cli_apellidos, case WHEN c.cli_tipo = 2 then 'Proveedor' else 'Cliente' end as tipo,  coalesce(c.cli_telf,'') as cli_movil,  coalesce(c.cli_email,'') as cli_email, coalesce(c.cli_dir,'') as cli_dir from clientes c]]>
+	</queryString>
+	<field name="cli_ci" class="java.lang.String"/>
+	<field name="cli_nombres" class="java.lang.String"/>
+	<field name="cli_apellidos" class="java.lang.String"/>
+	<field name="tipo" class="java.lang.String"/>
+	<field name="cli_movil" class="java.lang.String"/>
+	<field name="cli_email" class="java.lang.String"/>
+	<field name="cli_dir" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="68" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="10" width="545" height="30" uuid="1a8990d3-46c0-41f0-b430-36389eceec0e"/>
+				<textElement>
+					<font fontName="Arial" size="20" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Reporte de lista de clientes]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="446" y="40" width="100" height="14" uuid="1ffb2e6f-089b-485f-a9fe-a31ba301f602"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="350" y="40" width="96" height="15" uuid="6e46f44b-c050-4ace-a54b-817c6310789e">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Fecha del reporte:]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="76" height="15" uuid="ab316a72-6a37-4e30-8c9f-988e7a239cd3"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[CI/RUC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="76" y="0" width="138" height="15" uuid="c104029d-bfba-475f-9da0-a7bf783ff764"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Nombres]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="214" y="0" width="100" height="15" uuid="85576e39-f06f-48b2-b492-c093ae074572"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Apellidos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="315" y="0" width="50" height="15" uuid="50976cbe-4f0f-4ded-bf91-eb93b3a4c9fb"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Tipo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="365" y="0" width="100" height="15" uuid="3e1f3925-2700-43a6-a91a-4f756bff308d"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Celular]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="465" y="0" width="100" height="15" uuid="d780f773-7667-43f5-9ab3-e1128cf52f81"/>
+				<textElement>
+					<font fontName="Arial" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Dirección]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="76" height="20" uuid="e5c9a215-0ec1-421a-bfee-56a9dc97b92a"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cli_ci}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="76" y="0" width="138" height="20" uuid="ba625be8-8b27-403b-b09f-082dc34962ae"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cli_nombres}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="214" y="0" width="100" height="20" uuid="079c6441-b57f-47f4-951f-90c767d39890"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cli_apellidos}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="315" y="0" width="50" height="20" uuid="b03a2996-e12d-469a-8307-12e39ee43294"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="365" y="0" width="100" height="20" uuid="db1ebe2f-f3a3-4224-94f8-82bed131677a"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cli_movil}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="465" y="0" width="100" height="20" uuid="beefe57a-cae6-4e6d-940f-8411ee988fd7"/>
+				<textElement>
+					<font fontName="Arial" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{cli_dir}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="8" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="8" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="6" splitType="Stretch"/>
+	</summary>
+</jasperReport>

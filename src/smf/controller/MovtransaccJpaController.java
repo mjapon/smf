@@ -288,7 +288,7 @@ public class MovtransaccJpaController  extends BaseJpaController<Facturas> imple
     }
             
     
-    public void guardarAbono(AbonoForm form){
+    public void guardarAbono(AbonoForm form, Integer tdvId){
         
         try{
             em.getTransaction().begin();
@@ -303,6 +303,7 @@ public class MovtransaccJpaController  extends BaseJpaController<Facturas> imple
             movtransacc.setMovFechareg(new Date());
             movtransacc.setPgfId(form.getPagoId());
             movtransacc.setCjId(form.getCajaId());
+            movtransacc.setTdvId(tdvId);
             
             Transacciones traAbono = em.find(Transacciones.class, form.getTraId());
             movtransacc.setTraId(traAbono);

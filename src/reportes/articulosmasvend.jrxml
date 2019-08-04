@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2019-01-25T10:40:04 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ventasxarticulo" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="adad74b5-fab7-46b9-8e85-924f696204fc">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="FarmaJJPostgresDataAdap"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="277"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="712"/>
+	<parameter name="pdesde" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="phasta" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="pdescparams" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[select ART.art_nombre, round(sum(det.detf_cant),2) as cant, round( sum(  (1-det.detf_desc)* (det.detf_cant*det.detf_precio)  ), 2) as total,
+  round( sum ( (detf_iva::int) * ((1-det.detf_desc)* (det.detf_cant*det.detf_precio))*0.12    ),2) as IVA
+from facturas f
+  join detallesfact det ON f.fact_id = det.fact_id
+  join articulos art on det.art_id = art.art_id
+where
+  f.tra_id =1 and f.fact_valido =0
+  and f.fact_fecreg BETWEEN  $P{pdesde}  AND  $P{phasta} 
+GROUP BY ART.art_nombre  order by cant desc, total desc]]>
+	</queryString>
+	<field name="art_nombre" class="java.lang.String"/>
+	<field name="cant" class="java.math.BigDecimal"/>
+	<field name="total" class="java.math.BigDecimal"/>
+	<field name="iva" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="10" width="545" height="30" uuid="5b4aa2df-82f9-4fcd-8a49-003404c03245"/>
+				<textElement>
+					<font fontName="Arial" size="20" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Artículos mas vendidos]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="40" width="550" height="30" uuid="f322ef22-97aa-4d44-b2ae-dcb5fa829210"/>
+				<textElement>
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pdescparams}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="11" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="200" height="20" uuid="9f050b52-e363-4619-a11d-8c6041d297b2"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[ARTÍCULO]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="200" y="0" width="80" height="20" uuid="9a2adb2c-02ce-49d7-8044-22674eaffec8"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Cantidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="280" y="0" width="100" height="20" uuid="cd8245e8-26e0-4433-8d67-94e385cf9392"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Sub total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="380" y="0" width="80" height="20" uuid="222cc22e-8976-42d3-9f72-6aa106c83c2c"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Iva]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="460" y="0" width="80" height="20" uuid="cdd714d4-ed0f-42c3-9311-b5b69876215e"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="200" height="20" uuid="b561a27b-1abc-4084-9b0a-d2f5970fcb78"/>
+				<textFieldExpression><![CDATA[$F{art_nombre}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="200" y="0" width="80" height="20" uuid="5783ba32-3a09-4bc9-aee0-026a258ac6ed"/>
+				<textFieldExpression><![CDATA[$F{cant}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="280" y="0" width="100" height="20" uuid="d5367a11-5715-4455-922d-8b7104254ee9"/>
+				<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="380" y="0" width="80" height="20" uuid="8faf1d48-4608-44e0-83fd-e57dd5e91528"/>
+				<textFieldExpression><![CDATA[$F{iva}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="460" y="0" width="80" height="20" uuid="7d727cef-c490-4976-b72f-a4b8bf43a22a"/>
+				<textFieldExpression><![CDATA[$F{total}.add($F{iva})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="189" splitType="Stretch"/>
+	</summary>
+</jasperReport>

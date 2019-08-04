@@ -829,6 +829,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
         jPanel22.add(jTFFechaCadu);
         jPanel22.add(jLabel19);
 
+        jButtonSaveArt.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jButtonSaveArt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/Save_15px.png"))); // NOI18N
         jButtonSaveArt.setText("Guardar");
         jButtonSaveArt.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);

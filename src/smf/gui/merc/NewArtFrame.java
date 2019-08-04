@@ -184,7 +184,7 @@ public class NewArtFrame extends BaseFrame {
         jLabelTitle = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(500, 324));
+        setPreferredSize(new java.awt.Dimension(600, 500));
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -197,10 +197,14 @@ public class NewArtFrame extends BaseFrame {
 
         jPanel6.setLayout(new java.awt.GridLayout(11, 2));
 
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel10.setText("Tipo:");
+        jLabel10.setPreferredSize(new java.awt.Dimension(31, 20));
         jPanel6.add(jLabel10);
 
+        jCBTipo.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         jCBTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BIEN", "SERVICIO" }));
+        jCBTipo.setMinimumSize(new java.awt.Dimension(73, 35));
         jCBTipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCBTipoActionPerformed(evt);
@@ -208,9 +212,13 @@ public class NewArtFrame extends BaseFrame {
         });
         jPanel6.add(jCBTipo);
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         jLabel2.setText("Código:");
+        jLabel2.setPreferredSize(new java.awt.Dimension(37, 20));
         jPanel6.add(jLabel2);
 
+        jTFCodBarra.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        jTFCodBarra.setMinimumSize(new java.awt.Dimension(6, 40));
         jTFCodBarra.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTFCodBarraActionPerformed(evt);
@@ -223,23 +231,30 @@ public class NewArtFrame extends BaseFrame {
         });
         jPanel6.add(jTFCodBarra);
 
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         jLabel8.setText("Categoría:");
         jPanel6.add(jLabel8);
 
+        jCBCategoria.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jPanel6.add(jCBCategoria);
 
+        jLabel11.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         jLabel11.setText("Proveedor:");
         jPanel6.add(jLabel11);
 
+        jCBProveedor.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jPanel6.add(jCBProveedor);
 
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         jLabel7.setText("Graba IVA:");
         jPanel6.add(jLabel7);
         jPanel6.add(jCBIva);
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         jLabel3.setText("Nombre:");
         jPanel6.add(jLabel3);
 
+        jTFNombre.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTFNombre.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 jTFNombreMousePressed(evt);
@@ -252,9 +267,11 @@ public class NewArtFrame extends BaseFrame {
         });
         jPanel6.add(jTFNombre);
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         jLabel4.setText("Precio Venta:");
         jPanel6.add(jLabel4);
 
+        jTFPrecioVenta.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTFPrecioVenta.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jTFPrecioVentaKeyPressed(evt);
@@ -262,9 +279,11 @@ public class NewArtFrame extends BaseFrame {
         });
         jPanel6.add(jTFPrecioVenta);
 
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         jLabel5.setText("Precio Venta Mínimo:");
         jPanel6.add(jLabel5);
 
+        jTFPrecioMinimo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTFPrecioMinimo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jTFPrecioMinimoKeyPressed(evt);
@@ -272,9 +291,11 @@ public class NewArtFrame extends BaseFrame {
         });
         jPanel6.add(jTFPrecioMinimo);
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         jLabel6.setText("Precio Compra (sin iva):");
         jPanel6.add(jLabel6);
 
+        jTFPrecioCompra.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTFPrecioCompra.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jTFPrecioCompraKeyPressed(evt);
@@ -282,9 +303,11 @@ public class NewArtFrame extends BaseFrame {
         });
         jPanel6.add(jTFPrecioCompra);
 
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         jLabel9.setText("Inventario Actual");
         jPanel6.add(jLabel9);
 
+        jTFInventario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jTFInventario.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jTFInventarioKeyPressed(evt);
@@ -292,6 +315,7 @@ public class NewArtFrame extends BaseFrame {
         });
         jPanel6.add(jTFInventario);
 
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 15)); // NOI18N
         jLabel12.setText("Fecha Caducidad  dd/mm/aaaa");
         jPanel6.add(jLabel12);
 
@@ -300,6 +324,7 @@ public class NewArtFrame extends BaseFrame {
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
+        jTFFechaCadu.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jTFFechaCadu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTFFechaCaduActionPerformed(evt);
@@ -445,7 +470,8 @@ public class NewArtFrame extends BaseFrame {
 
             boolean genCodbar = false;
             if (genCodbar) {
-                codBarra = "GEN";
+                codBarra = "CODGEN";
+                
             }
 
             Categorias selectedCat = categorias.get(jCBCategoria.getSelectedIndex());

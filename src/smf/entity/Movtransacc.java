@@ -71,6 +71,9 @@ public class Movtransacc implements Serializable {
     @Column(name = "cj_id")
     private Integer cjId;
 
+    @Column(name = "tdv_id")
+    private Integer tdvId;
+
     public Movtransacc() {
     }
 
@@ -180,6 +183,12 @@ public class Movtransacc implements Serializable {
         this.cjId = cjId;
     }
 
-   
+    public Integer getTdvId() {
+        return tdvId;
+    }
+
+    public void setTdvId(Integer tdvId) {
+        this.tdvId = tdvId;
+    }
     
 }

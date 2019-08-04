@@ -15,6 +15,7 @@ import smf.controller.CajaJpaController;
 import smf.entity.Caja;
 import smf.gui.BaseFrame;
 import smf.gui.SmartFactMain;
+import smf.util.DatosUserSesion;
 import smf.util.FechasUtil;
 import smf.util.SelectingEditor;
 import smf.util.datamodels.AperturaCajaDM;
@@ -31,6 +32,7 @@ public class AperCajaFrame extends BaseFrame {
     private AperturaCajaDM aperturaCajaDM;
     private List<JTableColumn> columns;
     private Date dia;
+    private DatosUserSesion datosUserSesion;
     
     /**
      * Creates new form AperCajaFrame
@@ -47,6 +49,7 @@ public class AperCajaFrame extends BaseFrame {
         TableColumn colMonto = jTableMain.getColumnModel().getColumn( 1 );
         SelectingEditor selectingEditor = new SelectingEditor(new JTextField());
         colMonto.setCellEditor(selectingEditor);
+        datosUserSesion = SmartFactMain.getDatosUserSesion();
         
     }
 
@@ -55,18 +58,16 @@ public class AperCajaFrame extends BaseFrame {
             dia = new Date();
             dayName.setText(FechasUtil.getDayNameOfDate(dia));
             jTFFecha.setText( FechasUtil.format(dia) );
-            
-            if (cajaCntrl.existeCajaAbierta(dia)){
-                showMsg("Ya ha sido aperturada la caja para el día de hoy:"+FechasUtil.getDayNameOfDate(dia));
+
+            if (cajaCntrl.existeCajaAbierta(dia, datosUserSesion.getTdvId())) {
+                showMsg("Ya ha sido aperturada la caja para el día de hoy:" + FechasUtil.getDayNameOfDate(dia));
                 setVisible(false);
                 return -1;
-            }
-            else if (cajaCntrl.existeCajaAbiertaMenorFecha(dia)){
-                showMsg("No se puede abrir caja, existe una caja anterior que no ha sido cerrada aún, cierre esa caja para poder aperturar otra" );
+            } else if (cajaCntrl.existeCajaAbiertaMenorFecha(dia, datosUserSesion.getTdvId())) {
+                showMsg("No se puede abrir caja, existe una caja anterior que no ha sido cerrada aún, cierre esa caja para poder aperturar otra");
                 setVisible(false);
                 return -1;
-            }
-            else{
+            } else {
                 //Cargar informacion de la caja anterior
                 loadItems();
             }
@@ -130,7 +131,7 @@ public class AperCajaFrame extends BaseFrame {
     }
     
     public void loadItems(){
-        Caja cajaAnt = cajaCntrl.getUltCajaCerrada( );
+        Caja cajaAnt = cajaCntrl.getUltCajaCerrada( datosUserSesion.getTdvId() );
         aperturaCajaDM.setCajaAnt(cajaAnt);
         
         aperturaCajaDM.loadFromDataBase();
@@ -301,7 +302,7 @@ public class AperCajaFrame extends BaseFrame {
 
     private void jButtonGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonGuardarActionPerformed
         try{
-            cajaCntrl.crearCaja(dia, jTAObs.getText(), aperturaCajaDM.getItems());
+            cajaCntrl.crearCaja(dia, jTAObs.getText(), aperturaCajaDM.getItems(), datosUserSesion.getTdvId());
             String dayName = FechasUtil.getDayNameOfDate(dia);
             SmartFactMain.showSystemTrayMsg("CAJA APERTURA PARA EL DIA DE HOY:" + dayName);
             setVisible(false);

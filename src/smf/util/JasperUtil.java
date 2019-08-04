@@ -39,7 +39,7 @@ import net.sf.jasperreports.view.JasperViewer;
  */
 public class JasperUtil {
 
-    public static final String CLAVE_DB = "root"; //PROD->"root"
+    public static final String CLAVE_DB = "postgres"; //PROD->"root"
     public static final String URI_DB = "jdbc:postgresql://localhost:5432/farmaciajj";
 
     public static void main(String args[]) throws ParseException {

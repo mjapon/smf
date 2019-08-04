@@ -279,8 +279,8 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
             
             SecuenciasJpaController secuenciasJpaController = new SecuenciasJpaController(em);
             Secuencias secuencia = secuenciasJpaController.getSecuencia("ART_CODBAR");
-            if (genCodBarra){                                
-                filaArt.setCodBarra(String.valueOf(secuencia.getSecValor()));
+            if (genCodBarra){
+                filaArt.setCodBarra(String.format("CODBRGEN_%s",String.valueOf(secuencia.getSecValor())));
             }            
             
             if (yaExisteBarcode(filaArt.getCodBarra())){

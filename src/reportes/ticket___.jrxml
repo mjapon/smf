@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ticket" pageWidth="311" pageHeight="150" columnWidth="307" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" uuid="42e33fcd-e05d-4206-8ff3-a815626de7a0">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="farmaciajj"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<subDataset name="Dataset1" uuid="de0bb541-7b69-4d90-8b05-418eebc7e06a">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+	</subDataset>
+	<parameter name="ticketid" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[2]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+          tk.tk_id,
+          tk.tk_fecreg,
+          tk.tk_nro,
+          cli.cli_nombres,
+          cli.cli_ci,
+          cli.cli_dir,
+          cli.cli_telf,
+          tk.tk_monto,
+          tk.tk_obs,
+          cli.cli_id
+         from tickets tk
+         join clientes cli ON tk.cli_id = cli.cli_id
+  where
+         tk.tk_id = $P{ticketid} ]]>
+	</queryString>
+	<field name="tk_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="tk_id"/>
+	</field>
+	<field name="tk_fecreg" class="java.sql.Timestamp">
+		<property name="com.jaspersoft.studio.field.label" value="tk_fecreg"/>
+	</field>
+	<field name="tk_nro" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="tk_nro"/>
+	</field>
+	<field name="cli_nombres" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cli_nombres"/>
+	</field>
+	<field name="cli_ci" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cli_ci"/>
+	</field>
+	<field name="cli_dir" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cli_dir"/>
+	</field>
+	<field name="cli_telf" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cli_telf"/>
+	</field>
+	<field name="tk_monto" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="tk_monto"/>
+	</field>
+	<field name="tk_obs" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tk_obs"/>
+	</field>
+	<field name="cli_id" class="java.lang.Integer">
+		<property name="com.jaspersoft.studio.field.label" value="cli_id"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="140" splitType="Stretch">
+			<staticText>
+				<reportElement x="31" y="0" width="60" height="14" uuid="0c1fddd9-1eb6-4d94-9332-468212d0cb36"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fundación]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="8" y="13" width="110" height="14" uuid="f69a67d3-9c11-4ccd-95ce-f52dba3002ad"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[“Salud y Vida Nueva”]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="12" y="24" width="100" height="14" uuid="fef15b65-fc0d-4bc7-b28d-0d2485791f9e"/>
+				<textElement>
+					<font isItalic="true"/>
+				</textElement>
+				<text><![CDATA[Centro de Curación]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="22" y="42" width="70" height="30" uuid="8cb74c5c-e700-4c4d-a5a6-f1bad150015f"/>
+			</rectangle>
+			<staticText>
+				<reportElement x="26" y="43" width="60" height="12" uuid="7ff9292e-e85b-41b5-be38-f1ad0b607d79"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tiket Nro:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="28" y="57" width="60" height="14" uuid="40df803f-2ede-4d02-b5d2-abb026008ba0"/>
+				<textFieldExpression><![CDATA[$F{tk_nro}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="75" width="42" height="15" uuid="26a7f600-de74-43f7-9b74-b2ac72a96c23"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nombre:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="91" width="42" height="15" uuid="338e80a0-4929-4f3c-b8e6-46991775de66"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Fecha:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-2" y="110" width="40" height="14" uuid="0e6c709c-c7c7-4de2-8efe-a1c241b7383f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Valor:]]></text>
+			</staticText>
+			<rectangle>
+				<reportElement x="46" y="106" width="70" height="20" uuid="6ccb2510-9f9f-4cc5-89bc-85cef2965113"/>
+			</rectangle>
+			<textField>
+				<reportElement x="44" y="75" width="100" height="15" uuid="90e8e1d2-b4c5-410e-a727-99be60d18ea3"/>
+				<textFieldExpression><![CDATA[$F{cli_nombres}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="43" y="91" width="100" height="15" uuid="b6a84592-8992-4d37-896f-99a96d5c0824"/>
+				<textFieldExpression><![CDATA[$F{tk_fecreg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="45" y="110" width="70" height="15" uuid="77721dac-16dc-407a-877f-134585f9cc61"/>
+				<textFieldExpression><![CDATA[$F{tk_monto}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band splitType="Stretch"/>
+	</summary>
+</jasperReport>

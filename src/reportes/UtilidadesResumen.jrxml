@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="UtilidadesDet" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="7f00c3ad-495d-4187-971a-688f91d7859e">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="farmaciajj"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="208"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="785"/>
+	<parameter name="pdesde" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="phasta" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="pdescparams" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[(select sum(round(GET_UTILIDAD_FILA(det.detf_id, f.fact_id),2)) as utilidad, 'VENTAS EN EFECTIVO' as tipo, cc.cc_nombre as caja  
+from detallesfact det
+   join facturas f ON f.fact_id = det.fact_id
+  join pagosfact p on p.fact_id = f.fact_id and p.fp_id = 2 and p.pgf_monto = 0
+  join articulos a ON det.art_id = a.art_id
+  join categorias c on a.cat_id = c.cat_id
+  join catcajas cc on cc.cc_id = c.cat_caja
+ where f.fact_valido = 0 and f.fact_fecha between  $P{pdesde}   and   $P{phasta}  GROUP BY  tipo, cc.cc_nombre)
+
+
+union all
+
+(select sum(round(GET_UTILIDAD_FILA(det.detf_id, f.fact_id),2)) as utilidad, 'FACTURAS A CREDITO COBRADAS' as tipo, cc.cc_nombre as caja  
+from detallesfact det
+   join facturas f ON f.fact_id = det.fact_id
+  join pagosfact p on p.fact_id = f.fact_id and p.fp_id = 2 and p.pgf_monto > 0 and p.pgf_saldo = 0
+  join articulos a ON det.art_id = a.art_id
+  join categorias c on a.cat_id = c.cat_id
+  join catcajas cc on cc.cc_id = c.cat_caja
+  join movtransacc m ON p.pgf_id = m.pgf_id and m.mov_valido = 0 and m.mov_id = (select max(m2.mov_id) from movtransacc m2 where m2.fact_id_rel = f.fact_id and m2.mov_valido = 0)
+  where f.fact_valido = 0 and  cast(m.mov_fechareg as date)  BETWEEN $P{pdesde} and $P{phasta} GROUP BY tipo, cc.cc_nombre)
+  order by 2 desc, 3]]>
+	</queryString>
+	<field name="utilidad" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="utilidad"/>
+	</field>
+	<field name="tipo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="tipo"/>
+	</field>
+	<field name="caja" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="caja"/>
+	</field>
+	<variable name="SumaUtilidad" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{utilidad}]]></variableExpression>
+	</variable>
+	<group name="tipo">
+		<groupExpression><![CDATA[$F{tipo}]]></groupExpression>
+		<groupHeader>
+			<band height="25">
+				<textField>
+					<reportElement x="0" y="0" width="270" height="20" uuid="7f5f3697-c8df-4a61-b2b5-65af5baacdc4"/>
+					<textElement>
+						<font isBold="true" isItalic="true" isUnderline="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{tipo}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22"/>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="59" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="29" width="780" height="30" uuid="a3eaca28-6f70-4cac-b549-e2a13f947482"/>
+				<textElement>
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pdescparams}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="3" width="545" height="30" uuid="5c16d162-3a88-40da-a836-bebd1315b934"/>
+				<textElement>
+					<font fontName="Arial" size="20" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Utilidades por caja]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="3" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="26" splitType="Stretch">
+			<staticText>
+				<reportElement x="220" y="-3" width="100" height="18" uuid="a827314b-68b4-415c-bb17-4ddb804a534a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="eed86558-a5ac-4015-a68e-2173fe7b6978"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Utilidad]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="-3" width="210" height="18" uuid="6cfd6745-b66a-482a-9999-587d36fe4549">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cafa08cd-f5bb-4da1-98c2-00a903861263"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Caja]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="220" y="0" width="100" height="20" uuid="69f7c1e4-c87c-44bd-adc2-f011090d96f7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="eed86558-a5ac-4015-a68e-2173fe7b6978"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{utilidad}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="210" height="20" uuid="4bc3ea3e-acfe-449a-8fef-48f8a8c6f9e7">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="cafa08cd-f5bb-4da1-98c2-00a903861263"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{caja}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="21" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="26" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="1" splitType="Stretch"/>
+	</summary>
+</jasperReport>

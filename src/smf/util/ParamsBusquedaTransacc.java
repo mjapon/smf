@@ -25,6 +25,7 @@ public class ParamsBusquedaTransacc {
     private boolean usarFechaHora;
     private boolean byCat;
     private Integer catCajaId;
+    private Integer tdvId;
 
     public ParamsBusquedaTransacc() {
     }
@@ -141,7 +142,13 @@ public class ParamsBusquedaTransacc {
     public void setCatCajaId(Integer catCajaId) {
         this.catCajaId = catCajaId;
     }
-    
-    
-    
+
+
+    public Integer getTdvId() {
+        return tdvId;
+    }
+
+    public void setTdvId(Integer tdvId) {
+        this.tdvId = tdvId;
+    }
 }

@@ -5,92 +5,101 @@
  */
 package smf.gui;
 
-import java.awt.Image;
-import java.awt.image.BufferedImage;
+import org.jfree.chart.ChartPanel;
+import smf.controller.*;
+import smf.entity.Empresa;
+import smf.entity.Ttpdv;
+import smf.util.DatosUserSesion;
+import smf.util.graphics.CodBarraVentasUtil;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.math.BigDecimal;
-import java.net.URL;
 import java.util.Map;
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import smf.controller.EmpresaJpaController;
-import smf.controller.FacturasJpaController;
-import smf.controller.ResumenEmpCntrl;
-import smf.entity.Empresa;
-import smf.util.graphics.CodBarraVentasUtil;
-import org.jfree.chart.ChartPanel;
 
 /**
- *
  * @author mjapon
  */
 public class HomeFrame extends BaseFrame {
-    
+
     private SmartFactMain appMain;
     private EmpresaJpaController empresaController;
     private FacturasJpaController facturasController;
+    private TtpdvJpaController ttpdvJpaController;
+    private DatosUserSesion datosUserSesion;
+
     /**
      * Creates new form HomeFrame
      */
     public HomeFrame() {
         super();
-        initComponents();        
+        initComponents();
         empresaController = new EmpresaJpaController(em);
         facturasController = new FacturasJpaController(em);
+        ttpdvJpaController = new TtpdvJpaController(em);
+        datosUserSesion = SmartFactMain.getDatosUserSesion();
         loadDatosEmpresa();
         loadLogo();
         loadBGImage();
         loadInfoResumen();
-    }    
-    public void setFarmaAppMain(SmartFactMain appMain){
+    }
+
+    public void setFarmaAppMain(SmartFactMain appMain) {
         this.appMain = appMain;
     }
-    
-    public void updateGraphics(){
+
+
+    public void updateGraphics() {
         buildGraphics();
     }
-    
-    public void loadLogo(){
-        try {            
+
+    public void loadLogo() {
+        try {
             Empresa empresa = empresaController.getDatosEmpresa();
             String path = null;
-            if (empresa != null && empresa.getEmpLogo() != null && empresa.getEmpLogo().trim().length()>0){
-                path =  empresa.getEmpLogo().trim();
+            if (empresa != null && empresa.getEmpLogo() != null && empresa.getEmpLogo().trim().length() > 0) {
+                path = empresa.getEmpLogo().trim();
             }
-            
+
             Image img = null;
-            if (path != null){
+            if (path != null) {
                 img = ImageIO.read(new File(path));
+            } else {
+                img = ImageIO.read(SmartFactMain.class.getResource("/smf/gui/icons/deftimg.jpg"));
             }
-            else{
-                img =ImageIO.read(SmartFactMain.class.getResource("/smf/gui/icons/deftimg.jpg"));
-            }
-            
+
             Image dimg = img.getScaledInstance(jLabelLogo.getWidth(), jLabelLogo.getHeight(),
-            Image.SCALE_SMOOTH);
+                    Image.SCALE_SMOOTH);
             ImageIcon imageIcon = new ImageIcon(dimg);
             jLabelLogo.setIcon(imageIcon);
         } catch (Throwable e) {
             logError(e);
         }
     }
-    
-    public void loadDatosEmpresa(){
-        try{
+
+    public void loadDatosEmpresa() {
+        try {
             Empresa empresa = empresaController.getDatosEmpresa();
-            if (empresa != null){
-                jLabelNombreEmpresa.setText(empresa.getNombreComercial());
+
+            Ttpdv ttpdv = ttpdvJpaController.findById(datosUserSesion.getTdvId());
+            if (ttpdv == null) {
+                System.out.println("Error no pude leer el punto de emision asignado");
+            }
+
+            if (empresa != null) {
+                jLabelNombreEmpresa.setText(empresa.getNombreComercial() + "         PUNTO:"+ttpdv.getTdvNum());
                 jLabelRucEmpresa.setText(empresa.getEmpRuc());
                 jLabelRazonSocial.setText(empresa.getEmpRazonsocial());
                 jLabelDireccion.setText(empresa.getEmpDireccion());
             }
-        }
-        catch(Throwable ex){
+        } catch (Throwable ex) {
             logError(ex);
         }
-    }   
-    
-    public void loadBGImage(){
+    }
+
+    public void loadBGImage() {
         /*
         try {
             URL resource = SmartFactMain.class.getResource("fondoveterinaria.jpg");
@@ -103,44 +112,42 @@ public class HomeFrame extends BaseFrame {
             logError(e);
         }
         */
-    }    
-    
-    public void buildGraphics(){
-        try{
-            Map<Integer,BigDecimal> mapVentas = facturasController.getVentasSemana();
+    }
+
+    public void buildGraphics() {
+        try {
+            Map<Integer, BigDecimal> mapVentas = facturasController.getVentasSemana();
             ChartPanel chartPanel = CodBarraVentasUtil.getChart("", mapVentas);
             jPanelVentSem.removeAll();
-            jPanelVentSem.add( chartPanel );
+            jPanelVentSem.add(chartPanel);
             this.pack();
-        }
-        catch(Throwable ex){
+        } catch (Throwable ex) {
             showMsgError(ex, "Error al tratar de crear gráfica de ventas");
         }
     }
-    
-    public void loadInfoResumen(){
-        try{
+
+    public void loadInfoResumen() {
+        try {
             ResumenEmpCntrl cntrl = new ResumenEmpCntrl(em);
             Map<String, BigDecimal> resultMap = cntrl.getResumen();
-            
-            BigDecimal ninv =  resultMap.get("INV");
-            BigDecimal ninvB =  resultMap.get("INV_B");
-            BigDecimal ninvS =  resultMap.get("INV_S");
-            
-            BigDecimal nartXExp =  resultMap.get("ARTXEXP");
-            BigDecimal nartExp =  resultMap.get("ARTEXP");
-            
-            jLabelArtExp.setText(String.valueOf( nartExp.intValue()) );
-            jLabelArtXExp.setText(String.valueOf(nartXExp.intValue()) );
-            
-            jLabelNumArt.setText(String.valueOf( ninvB.intValue())  );
-            jLabelNumServ.setText(String.valueOf( ninvS.intValue())  );
-        }
-        catch(Throwable ex){
+
+            BigDecimal ninv = resultMap.get("INV");
+            BigDecimal ninvB = resultMap.get("INV_B");
+            BigDecimal ninvS = resultMap.get("INV_S");
+
+            BigDecimal nartXExp = resultMap.get("ARTXEXP");
+            BigDecimal nartExp = resultMap.get("ARTEXP");
+
+            jLabelArtExp.setText(String.valueOf(nartExp.intValue()));
+            jLabelArtXExp.setText(String.valueOf(nartXExp.intValue()));
+
+            jLabelNumArt.setText(String.valueOf(ninvB.intValue()));
+            jLabelNumServ.setText(String.valueOf(ninvS.intValue()));
+        } catch (Throwable ex) {
             logError(ex);
         }
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -215,48 +222,48 @@ public class HomeFrame extends BaseFrame {
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelNombreEmpresa)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelRazonSocial, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelRucEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 208, Short.MAX_VALUE)
-                .addComponent(jLabelLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabelNombreEmpresa)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel3)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabelDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel2)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabelRazonSocial, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel1)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jLabelRucEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 208, Short.MAX_VALUE)
+                                .addComponent(jLabelLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabelNombreEmpresa)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabelRucEmpresa))
-                        .addGap(1, 1, 1)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabelRazonSocial))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabelDireccion))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jLabelLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabelNombreEmpresa)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel1)
+                                                        .addComponent(jLabelRucEmpresa))
+                                                .addGap(1, 1, 1)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel2)
+                                                        .addComponent(jLabelRazonSocial))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(jLabel3)
+                                                        .addComponent(jLabelDireccion))))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);
@@ -286,49 +293,49 @@ public class HomeFrame extends BaseFrame {
         javax.swing.GroupLayout jPanelResumenLayout = new javax.swing.GroupLayout(jPanelResumen);
         jPanelResumen.setLayout(jPanelResumenLayout);
         jPanelResumenLayout.setHorizontalGroup(
-            jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelResumenLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelResumenLayout.createSequentialGroup()
-                        .addComponent(jLabel4)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabelNumArt))
-                    .addGroup(jPanelResumenLayout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabelArtXExp))
-                    .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelResumenLayout.createSequentialGroup()
-                            .addComponent(jLabel6)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabelArtExp))
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelResumenLayout.createSequentialGroup()
-                            .addComponent(jLabel5)
-                            .addGap(18, 18, 18)
-                            .addComponent(jLabelNumServ))))
-                .addContainerGap(249, Short.MAX_VALUE))
+                jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelResumenLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanelResumenLayout.createSequentialGroup()
+                                                .addComponent(jLabel4)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jLabelNumArt))
+                                        .addGroup(jPanelResumenLayout.createSequentialGroup()
+                                                .addComponent(jLabel7)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jLabelArtXExp))
+                                        .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelResumenLayout.createSequentialGroup()
+                                                        .addComponent(jLabel6)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(jLabelArtExp))
+                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanelResumenLayout.createSequentialGroup()
+                                                        .addComponent(jLabel5)
+                                                        .addGap(18, 18, 18)
+                                                        .addComponent(jLabelNumServ))))
+                                .addContainerGap(249, Short.MAX_VALUE))
         );
         jPanelResumenLayout.setVerticalGroup(
-            jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelResumenLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabelNumArt))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabelNumServ))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabelArtExp))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabelArtXExp))
-                .addContainerGap(76, Short.MAX_VALUE))
+                jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanelResumenLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel4)
+                                        .addComponent(jLabelNumArt))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel5)
+                                        .addComponent(jLabelNumServ))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel6)
+                                        .addComponent(jLabelArtExp))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanelResumenLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jLabel7)
+                                        .addComponent(jLabelArtXExp))
+                                .addContainerGap(76, Short.MAX_VALUE))
         );
 
         jPanel3.add(jPanelResumen);
@@ -464,6 +471,7 @@ public class HomeFrame extends BaseFrame {
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/icons8-giving_tickets.png"))); // NOI18N
         jButton2.setText("Tickets");
         jButton2.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jButton2.setEnabled(false);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
@@ -536,7 +544,7 @@ public class HomeFrame extends BaseFrame {
     private void jButtonFactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFactActionPerformed
         appMain.showListaVentas();
     }//GEN-LAST:event_jButtonFactActionPerformed
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton10;

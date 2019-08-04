@@ -140,6 +140,11 @@ public class FacturaDataModel extends AbstractTableModel{
         fireTableDataChanged();
     }
 
+    public void updateTotales(){
+        totalizarFactura();
+        fireTableDataChanged();
+    }
+
     @Override
     public String getColumnName(int column) {
         if (column>=0 && column<ColumnaFacturaEnum.values().length){            

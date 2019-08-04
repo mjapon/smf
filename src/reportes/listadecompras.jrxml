@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cuentasxcobrar" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="26b2d34c-1d62-4ec7-aae0-9303c2436bdc">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="FarmaJJPostgresDataAdap"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="116"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="873"/>
+	<parameter name="pdesde" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="phasta" class="java.util.Date">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="pdescparams" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pwhere" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="pcliid" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[0]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[select
+f.fact_id as factId,
+f.fact_num as factNum,
+f.fact_fecreg as factFecreg,
+coalesce(cli.cli_nombres,'') ||' '|| coalesce(cli.cli_apellidos,'') as cliente,
+cli.cli_ci as cliCi,
+round( coalesce(GET_PAGO(f.fact_id,1),0.0) ,2) as efectivo,
+round( coalesce(GET_PAGO(f.fact_id,2),0.0) ,2) as credito,
+round( coalesce(GET_PAGOSALDO(f.fact_id,2),0.0) ,2) as saldo,
+round(  f.fact_subt ,2) as subt,
+round(  f.fact_iva ,2) as iva,
+round( f.fact_total ,2) as factTotal,
+round( f.fact_desc ,2) as descuento,
+round( f.fact_utilidad ,2) as utilidad
+from facturas f
+join clientes cli ON f.cli_id = cli.cli_id
+where f.fact_valido = 0 and f.tra_id=2 $P!{pwhere}
+ORDER BY factFecreg]]>
+	</queryString>
+	<field name="factid" class="java.lang.Integer"/>
+	<field name="factnum" class="java.lang.String"/>
+	<field name="factfecreg" class="java.sql.Timestamp"/>
+	<field name="cliente" class="java.lang.String"/>
+	<field name="clici" class="java.lang.String"/>
+	<field name="efectivo" class="java.math.BigDecimal"/>
+	<field name="credito" class="java.math.BigDecimal"/>
+	<field name="saldo" class="java.math.BigDecimal"/>
+	<field name="subt" class="java.math.BigDecimal"/>
+	<field name="iva" class="java.math.BigDecimal"/>
+	<field name="facttotal" class="java.math.BigDecimal"/>
+	<field name="descuento" class="java.math.BigDecimal"/>
+	<field name="utilidad" class="java.math.BigDecimal"/>
+	<variable name="suma_subt" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{subt}]]></variableExpression>
+	</variable>
+	<variable name="suma_iva" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{iva}]]></variableExpression>
+	</variable>
+	<variable name="suma_total" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{facttotal}]]></variableExpression>
+	</variable>
+	<variable name="suma_efectivo" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{efectivo}]]></variableExpression>
+	</variable>
+	<variable name="suma_credito" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{credito}]]></variableExpression>
+	</variable>
+	<variable name="suma_saldo" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{saldo}]]></variableExpression>
+	</variable>
+	<variable name="suma_utilidad" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{utilidad}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="86" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="3" width="545" height="30" uuid="5e77d603-0786-453f-8e0b-329a2dd27c2f"/>
+				<textElement>
+					<font fontName="Arial" size="20" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Lista de facturas de compra]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy">
+				<reportElement x="700" y="63" width="100" height="14" uuid="43875137-d6d1-4fe1-853e-ca9f1eefd515"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="600" y="63" width="99" height="15" uuid="1f523ea9-2a81-4877-a238-7be3eb627e91">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<text><![CDATA[Fecha del reporte:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="29" width="780" height="30" uuid="450325b4-a70b-4530-8ba3-1050944de854"/>
+				<textElement>
+					<font fontName="Arial" size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{pdescparams}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="5" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="23" splitType="Stretch">
+			<staticText>
+				<reportElement x="-4" y="0" width="90" height="20" uuid="a5fc881a-724c-4fbe-9cfd-5ca8505a9191"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Núm. Factura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="87" y="0" width="70" height="20" uuid="59a770f7-b4de-4122-a2ad-fce32aa9a6d3"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Fecha]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="171" y="-1" width="70" height="20" uuid="25eeb0ca-cd43-4e9e-8dc2-db467d9ecb2f"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[RUC]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="0" width="140" height="20" uuid="9deb822c-bd0d-4676-8853-c0ecdf94ee6e">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Proveedor]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="391" y="1" width="70" height="19" uuid="19235d28-48ca-403e-8302-5b8f0a103234"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Subt]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="466" y="2" width="50" height="19" uuid="44e32c8c-4274-403a-8c2f-62ffb1916067"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Iva]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="516" y="2" width="60" height="19" uuid="7c1d9fb7-fd33-4941-bbf9-adb43b00a75d"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Total]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="576" y="2" width="70" height="19" uuid="ead95035-c63b-412e-b04f-5efd819c1c0a"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Efectivo]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="647" y="2" width="60" height="19" uuid="7ed97068-2f6b-41d7-b789-17ca81fd9823"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Crédito]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="708" y="2" width="70" height="19" uuid="10c4b3f2-34a4-4ff7-8b97-7b9cf38d0958"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Saldo]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement x="-4" y="0" width="90" height="20" uuid="8cddd473-ab6f-4d50-9855-d9bc4a5b364c"/>
+				<textFieldExpression><![CDATA[$F{factnum}]]></textFieldExpression>
+			</textField>
+			<textField pattern="dd/MM/yyyy ">
+				<reportElement x="87" y="0" width="70" height="20" uuid="cd2b1fcd-b270-432a-8504-a83baa18a540"/>
+				<textFieldExpression><![CDATA[$F{factfecreg}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="171" y="0" width="75" height="20" uuid="73e58f9f-8604-4923-9435-cecfa36cd2f1">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{clici}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="249" y="0" width="142" height="20" uuid="9711e113-6efa-4ffe-bdba-3e8f2ff35fcb">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="391" y="1" width="70" height="19" uuid="3d00a66e-d015-400d-87a1-9a65fde5a591"/>
+				<textFieldExpression><![CDATA[$F{subt}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="466" y="1" width="50" height="19" uuid="8b852e12-0696-4172-813a-1ba1e399baac"/>
+				<textFieldExpression><![CDATA[$F{iva}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="516" y="1" width="60" height="19" uuid="ddca560e-abeb-4b6b-80a1-84e78d0222cd"/>
+				<textFieldExpression><![CDATA[$F{facttotal}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="576" y="1" width="70" height="19" uuid="8809922a-0248-46d2-a9e2-cde4f2568cb8"/>
+				<textFieldExpression><![CDATA[$F{efectivo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="646" y="1" width="60" height="19" uuid="1edb8313-58d4-4108-a47e-034024c5603a"/>
+				<textFieldExpression><![CDATA[$F{credito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="706" y="1" width="72" height="19" uuid="8bd26eae-9041-49b2-8706-2afd1f8a6b1b"/>
+				<textFieldExpression><![CDATA[$F{saldo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="57" splitType="Stretch">
+			<staticText>
+				<reportElement x="260" y="0" width="100" height="20" uuid="ebaa5303-3595-4d95-b11c-35ac93952ba7"/>
+				<textElement>
+					<font isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="391" y="0" width="70" height="30" uuid="8827f5df-74e5-430f-b401-0afba95f7244"/>
+				<textFieldExpression><![CDATA[$V{suma_subt}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="466" y="0" width="50" height="30" uuid="c41b2802-8da4-4886-85eb-64ac7a08707c"/>
+				<textFieldExpression><![CDATA[$V{suma_iva}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="516" y="0" width="60" height="30" uuid="af69d472-3908-42bd-8f82-1fa8d060eddc"/>
+				<textFieldExpression><![CDATA[$V{suma_total}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="576" y="0" width="70" height="30" uuid="a05a05c5-c2bf-4cb9-8cd8-328f402051cb"/>
+				<textFieldExpression><![CDATA[$V{suma_efectivo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="646" y="0" width="62" height="30" uuid="56eae152-80c5-4236-aca6-f90dfcff1c9f"/>
+				<textFieldExpression><![CDATA[$V{suma_credito}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="708" y="0" width="70" height="30" uuid="b298f997-f42b-48d8-a048-808d78151a36"/>
+				<textFieldExpression><![CDATA[$V{suma_saldo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="18" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="21" splitType="Stretch"/>
+	</summary>
+</jasperReport>

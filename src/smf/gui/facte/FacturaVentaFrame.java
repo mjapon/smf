@@ -27,38 +27,18 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.text.MaskFormatter;
-import smf.controller.ArticulosJpaController;
-import smf.controller.CajaJpaController;
-import smf.controller.ClientesJpaController;
-import smf.controller.CtesJpaController;
-import smf.controller.FacturasJpaController;
-import smf.controller.SecuenciasJpaController;
-import smf.entity.Articulos;
-import smf.entity.Caja;
-import smf.entity.Clientes;
-import smf.entity.Ctes;
-import smf.entity.Facturas;
-import smf.entity.Secuencias;
+
+import smf.controller.*;
+import smf.entity.*;
 import smf.gui.BaseFrame;
 import smf.gui.SmartFactMain;
 import smf.gui.merc.unid.IListenerSelectUnity;
 import smf.gui.merc.unid.PreciosXUnidadFrame;
-import smf.util.ArticulosModelListener;
-import smf.util.DatosCabeceraFactura;
-import smf.util.EntityManagerUtil;
+import smf.util.*;
 import smf.util.datamodels.FacturaDataModel;
-import smf.util.FacturaModelListener;
-import smf.util.FechasUtil;
-import smf.util.IVAComboBoxEditor;
-import smf.util.IVAComboBoxRenderer;
 import smf.util.datamodels.rows.FilaArticulo;
 import smf.util.datamodels.rows.FilaFactura;
 import smf.util.datamodels.rows.FilaPago;
-import smf.util.NumbersUtil;
-import smf.util.PrintFactUtil;
-import smf.util.SelectingEditor;
-import smf.util.StringUtil;
-import smf.util.TotalesFactura;
 import smf.util.datamodels.ArticulosDataModel;
 import smf.util.datamodels.rows.FilaPagoByCaja;
 import smf.util.datamodels.rows.FilaUnidadPrecio;
@@ -90,15 +70,20 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
     private IAdminVentas adminVentasFrame;
     private PagosEfectByCaja pagosEfectByCajaFrame;
     private Integer idFactura;
-    
+    private DatosUserSesion datosUserSesion;
+    private TtpdvJpaController ttpdvController;
+
     /**
      * Creates new form FacturaVentaFrame
      */
     public FacturaVentaFrame(Integer tra_codigo, Integer idFactura) {
         super();
         initComponents();
+
+        ttpdvController = new TtpdvJpaController(this.em);
         
-        this.tra_codigo = tra_codigo;  
+        this.tra_codigo = tra_codigo;
+        this.datosUserSesion = SmartFactMain.getDatosUserSesion();
         
         if (this.tra_codigo == 1){
             this.jLabelTitulo.setText("FACTURA DE VENTA");
@@ -124,12 +109,10 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
             checkSaveStatusBtn();
         });
         
-        
         String[] values = new String[] { "SI", "NO"};
         TableColumn colIva = jTableFactura.getColumnModel().getColumn(FacturaDataModel.ColumnaFacturaEnum.IVA.index);
         colIva.setCellEditor(new IVAComboBoxEditor(values));
-        colIva.setCellRenderer(new IVAComboBoxRenderer(values));        
-        
+        colIva.setCellRenderer(new IVAComboBoxRenderer(values));
         
         TableColumn colCantidad = jTableFactura.getColumnModel().getColumn( FacturaDataModel.ColumnaFacturaEnum.CANTIDAD.index );
         SelectingEditor selectingEditor = new SelectingEditor(new JTextField());
@@ -254,6 +237,8 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         jButtonBorrar.setEnabled( isEnabled );
         jBtnPrecios.setEnabled(isEnabled);
         jBtnDescuentos.setEnabled(isEnabled);
+        jBtnMas.setEnabled(isEnabled);
+        jBtnMenos.setEnabled(isEnabled);
     }
     
     public void loadDatosCli(String cliCi){        
@@ -267,7 +252,7 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         jButtonGuardar.setEnabled(isEnabled);
     }    
     
-    float[] columnWidthPercentage = {60.0f, 20.0f, 20.0f};
+    float[] columnWidthPercentage = {74.0f, 16.0f, 10.0f};
     
     private void resizeColumns() {
         int tW = jTableArts.getWidth();
@@ -309,9 +294,9 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         boolean resultAperturaCaja = false;
         try{
             Date today = new Date();
-            if (!cajaJpaController.existeCajaAbierta(today)){
-                if (cajaJpaController.existeCajaAbiertaMenorFecha(today)){
-                    Caja caja = cajaJpaController.getCajaAbiertaMenorFecha(today);
+            if (!cajaJpaController.existeCajaAbierta(today,datosUserSesion.getTdvId())){
+                if (cajaJpaController.existeCajaAbiertaMenorFecha(today, datosUserSesion.getTdvId())){
+                    Caja caja = cajaJpaController.getCajaAbiertaMenorFecha(today, datosUserSesion.getTdvId());
                     if (caja != null){
                         showMsg(" Existe una caja anterior no cerrada (fecha:"+FechasUtil.format(caja.getCjFecaper())+" ), debe cerrar esta caja antes de empezar el día ");
                     }
@@ -383,6 +368,8 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
             String estabPtoEmi = "";
             Ctes ctesStab = ctesController.findByClave("ESTAB");
 
+            Ttpdv ttpdv = ttpdvController.findById(datosUserSesion.getTdvId());
+
             if (ctesStab == null){
                 JOptionPane.showMessageDialog(this, "ERROR:No se a registrado ESTAB en ctes", "ERROR CONFIG", JOptionPane.ERROR_MESSAGE);
             }
@@ -390,13 +377,13 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
                 estabPtoEmi = ctesStab.getCtesValor();
             }
 
-            Ctes ctesPtoEmi = ctesController.findByClave("PTOEMI");
-
-            if (ctesPtoEmi == null){
+            //Ctes ctesPtoEmi = ctesController.findByClave("PTOEMI");
+            //if (ctesPtoEmi == null){
+            if (ttpdv == null) {
                 JOptionPane.showMessageDialog(this, "ERROR:No se a registrado ESTAB en ctes", "ERROR CONFIG", JOptionPane.ERROR_MESSAGE);
             }
             else{
-                estabPtoEmi = estabPtoEmi+ctesStab.getCtesValor();        
+                estabPtoEmi = estabPtoEmi+ttpdv.getTdvNum();
             }
 
             this.jLabelEstPtoEmi.setText(estabPtoEmi);
@@ -474,21 +461,23 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
                 estabPtoEmi = ctesStab.getCtesValor();
             }
 
-            Ctes ctesPtoEmi = ctesController.findByClave("PTOEMI");
+            Ttpdv ttpdv = ttpdvController.findById(datosUserSesion.getTdvId());
+            //Ctes ctesPtoEmi = ctesController.findByClave("PTOEMI");
 
-            if (ctesPtoEmi == null){
+            if (ttpdv == null){
                 JOptionPane.showMessageDialog(this, "ERROR:No se a registrado ESTAB en ctes", "ERROR CONFIG", JOptionPane.ERROR_MESSAGE);
             }
             else{
-                estabPtoEmi = estabPtoEmi+ctesStab.getCtesValor();        
+                estabPtoEmi = estabPtoEmi+ttpdv.getTdvNum();
             }
 
             this.jLabelEstPtoEmi.setText(estabPtoEmi);
             
-            
-            Secuencias secuencia = secuenciasController.getSecuencia("EST001");
+            //Secuencias secuencia = secuenciasController.getSecuencia("EST001");
+            String claveSecuencia = String.format("TDV_%d", datosUserSesion.getTdvId());
+            Secuencias secuencia = secuenciasController.getSecuencia(claveSecuencia);
             if (secuencia == null){
-                JOptionPane.showMessageDialog(this, "ERROR:No se a registrado la secuencia de facturas:EST001, favor registrar", "ERROR SECUENCIAS", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, String.format("ERROR:No se a registrado la secuencia de facturas:%s, favor registrar", claveSecuencia), "ERROR SECUENCIAS", JOptionPane.ERROR_MESSAGE);
             }
             else{
                 jTFNumFact.setText( String.valueOf( secuencia.getSecValor() ) );
@@ -668,6 +657,10 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableFactura = new javax.swing.JTable();
         jPanel8 = new javax.swing.JPanel();
+        jPanelObs = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTextAreaObs = new javax.swing.JTextArea();
+        jPanel19 = new javax.swing.JPanel();
         jPanelSouth = new javax.swing.JPanel();
         jPanel13 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -681,22 +674,17 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         jPanel17 = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
         jTFTotal = new javax.swing.JTextField();
-        jPanel16 = new javax.swing.JPanel();
-        jPanel10 = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jTFVuelto = new javax.swing.JTextField();
-        jLabelVuelto = new javax.swing.JLabel();
         jPanel1FormasPago = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
         jTFEfectivo = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
         jTFCredito = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
         jTFTotalPagos = new javax.swing.JTextField();
-        jPanelObs = new javax.swing.JPanel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        jTextAreaObs = new javax.swing.JTextArea();
+        jLabel13 = new javax.swing.JLabel();
+        jTFVuelto = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        jLabelVuelto = new javax.swing.JLabel();
         jPanel7 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jLabelEstPtoEmi = new javax.swing.JLabel();
@@ -729,6 +717,8 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         jPanel9 = new javax.swing.JPanel();
         jButtonGuardar = new javax.swing.JButton();
         jButtonBorrar = new javax.swing.JButton();
+        jBtnMas = new javax.swing.JButton();
+        jBtnMenos = new javax.swing.JButton();
         jBtnPrecios = new javax.swing.JButton();
         jBtnDescuentos = new javax.swing.JButton();
         jButtonSalir = new javax.swing.JButton();
@@ -743,11 +733,11 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setPreferredSize(new java.awt.Dimension(1200, 830));
         addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowOpened(java.awt.event.WindowEvent evt) {
-                formWindowOpened(evt);
-            }
             public void windowActivated(java.awt.event.WindowEvent evt) {
                 formWindowActivated(evt);
+            }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
             }
         });
 
@@ -763,6 +753,7 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
 
         jPanel6.setLayout(new java.awt.BorderLayout());
 
+        jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder("Nro Items:"));
         jScrollPane1.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
         jTableFactura.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
@@ -782,11 +773,24 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
 
         jPanel6.add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
-        jPanel8.setLayout(new java.awt.GridLayout(3, 1));
+        jPanel8.setLayout(new java.awt.BorderLayout());
 
-        jPanelSouth.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 13))); // NOI18N
-        jPanelSouth.setPreferredSize(new java.awt.Dimension(467, 60));
-        jPanelSouth.setLayout(new java.awt.GridLayout(1, 3));
+        jPanelObs.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Observación", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 12))); // NOI18N
+        jPanelObs.setLayout(new java.awt.BorderLayout());
+
+        jTextAreaObs.setColumns(20);
+        jTextAreaObs.setRows(2);
+        jScrollPane3.setViewportView(jTextAreaObs);
+
+        jPanelObs.add(jScrollPane3, java.awt.BorderLayout.CENTER);
+
+        jPanel8.add(jPanelObs, java.awt.BorderLayout.SOUTH);
+
+        jPanel19.setLayout(new java.awt.BorderLayout());
+
+        jPanelSouth.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Totales", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 12))); // NOI18N
+        jPanelSouth.setPreferredSize(new java.awt.Dimension(467, 90));
+        jPanelSouth.setLayout(new java.awt.GridLayout(1, 2));
 
         jPanel13.setLayout(new java.awt.GridLayout(4, 2));
 
@@ -817,7 +821,7 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         jPanel13.add(jTFDescFila);
 
         jLabel20.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel20.setText("DESCUENTO FACTURA:");
+        jLabel20.setText("DESC FACTURA:");
         jPanel13.add(jLabel20);
 
         jTFDescGlobal.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
@@ -837,52 +841,21 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         jPanel17.add(jLabel21);
 
         jTFTotal.setEditable(false);
-        jTFTotal.setFont(new java.awt.Font("Arial", 0, 24)); // NOI18N
+        jTFTotal.setFont(new java.awt.Font("Arial", 1, 26)); // NOI18N
         jTFTotal.setForeground(new java.awt.Color(51, 204, 0));
         jPanel17.add(jTFTotal);
 
         jPanelSouth.add(jPanel17);
 
-        jPanel16.setLayout(new java.awt.BorderLayout());
+        jPanel19.add(jPanelSouth, java.awt.BorderLayout.CENTER);
 
-        jPanel10.setLayout(new java.awt.GridLayout(2, 1));
-
-        jLabel13.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel13.setText("Cambio:");
-        jPanel10.add(jLabel13);
-        jPanel10.add(jLabel1);
-
-        jTFVuelto.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
-        jTFVuelto.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTFVueltoKeyReleased(evt);
-            }
-        });
-        jPanel10.add(jTFVuelto);
-
-        jLabelVuelto.setFont(new java.awt.Font("Lucida Grande", 0, 24)); // NOI18N
-        jPanel10.add(jLabelVuelto);
-
-        jPanel16.add(jPanel10, java.awt.BorderLayout.CENTER);
-
-        jPanelSouth.add(jPanel16);
-
-        jPanel8.add(jPanelSouth);
-
-        jPanel1FormasPago.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Formas de Pago", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 13))); // NOI18N
-        jPanel1FormasPago.setLayout(new java.awt.GridLayout(2, 3));
+        jPanel1FormasPago.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Formas de Pago", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 0, 12))); // NOI18N
+        jPanel1FormasPago.setPreferredSize(new java.awt.Dimension(300, 124));
+        jPanel1FormasPago.setLayout(new java.awt.GridLayout(5, 2));
 
         jLabel5.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
         jLabel5.setText("EFECTIVO:");
         jPanel1FormasPago.add(jLabel5);
-
-        jLabel15.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel15.setText("CRÉDITO:");
-        jPanel1FormasPago.add(jLabel15);
-
-        jLabel16.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
-        jLabel16.setText("TOTAL:");
-        jPanel1FormasPago.add(jLabel16);
 
         jTFEfectivo.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         jTFEfectivo.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -900,6 +873,10 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         });
         jPanel1FormasPago.add(jTFEfectivo);
 
+        jLabel15.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel15.setText("CRÉDITO:");
+        jPanel1FormasPago.add(jLabel15);
+
         jTFCredito.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         jTFCredito.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -916,6 +893,10 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         });
         jPanel1FormasPago.add(jTFCredito);
 
+        jLabel16.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel16.setText("TOTAL:");
+        jPanel1FormasPago.add(jLabel16);
+
         jTFTotalPagos.setEditable(false);
         jTFTotalPagos.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
         jTFTotalPagos.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -925,18 +906,25 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         });
         jPanel1FormasPago.add(jTFTotalPagos);
 
-        jPanel8.add(jPanel1FormasPago);
+        jLabel13.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jLabel13.setText("Cambio:");
+        jPanel1FormasPago.add(jLabel13);
 
-        jPanelObs.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Observación", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Arial", 1, 13))); // NOI18N
-        jPanelObs.setLayout(new java.awt.BorderLayout());
+        jTFVuelto.setFont(new java.awt.Font("Lucida Grande", 0, 14)); // NOI18N
+        jTFVuelto.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTFVueltoKeyReleased(evt);
+            }
+        });
+        jPanel1FormasPago.add(jTFVuelto);
+        jPanel1FormasPago.add(jLabel1);
 
-        jTextAreaObs.setColumns(20);
-        jTextAreaObs.setRows(5);
-        jScrollPane3.setViewportView(jTextAreaObs);
+        jLabelVuelto.setFont(new java.awt.Font("Lucida Grande", 0, 24)); // NOI18N
+        jPanel1FormasPago.add(jLabelVuelto);
 
-        jPanelObs.add(jScrollPane3, java.awt.BorderLayout.CENTER);
+        jPanel19.add(jPanel1FormasPago, java.awt.BorderLayout.EAST);
 
-        jPanel8.add(jPanelObs);
+        jPanel8.add(jPanel19, java.awt.BorderLayout.CENTER);
 
         jPanel6.add(jPanel8, java.awt.BorderLayout.SOUTH);
 
@@ -1071,7 +1059,7 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         jPanel3.setLayout(new java.awt.BorderLayout());
 
         jLabel7.setFont(new java.awt.Font("Arial", 0, 13)); // NOI18N
-        jLabel7.setText("Direccion:");
+        jLabel7.setText("Dirección:");
         jPanel3.add(jLabel7, java.awt.BorderLayout.NORTH);
         jPanel3.add(jTFDireccion, java.awt.BorderLayout.CENTER);
 
@@ -1121,14 +1109,17 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
 
         jPanel11.add(jPanelNorth, java.awt.BorderLayout.NORTH);
 
-        jPanelEst.setPreferredSize(new java.awt.Dimension(100, 328));
+        jPanelEst.setPreferredSize(new java.awt.Dimension(83, 328));
         jPanelEst.setLayout(new java.awt.BorderLayout());
 
+        jPanel9.setMinimumSize(new java.awt.Dimension(90, 232));
+        jPanel9.setPreferredSize(new java.awt.Dimension(60, 232));
         jPanel9.setLayout(new java.awt.GridLayout(8, 1));
 
         jButtonGuardar.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
-        jButtonGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/Save_20px.png"))); // NOI18N
+        jButtonGuardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/icons8-save-20.png"))); // NOI18N
         jButtonGuardar.setText("Guardar");
+        jButtonGuardar.setToolTipText("Guarda la factura realizada");
         jButtonGuardar.setEnabled(false);
         jButtonGuardar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jButtonGuardar.setMargin(new java.awt.Insets(2, 5, 2, 5));
@@ -1142,6 +1133,7 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         jButtonBorrar.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jButtonBorrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/Trash_20px.png"))); // NOI18N
         jButtonBorrar.setText("Quitar");
+        jButtonBorrar.setToolTipText("Elimina el articulo seleccionado de la factura");
         jButtonBorrar.setEnabled(false);
         jButtonBorrar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jButtonBorrar.setMargin(new java.awt.Insets(2, 5, 2, 5));
@@ -1151,6 +1143,32 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
             }
         });
         jPanel9.add(jButtonBorrar);
+
+        jBtnMas.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jBtnMas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/icons8-plus-20.png"))); // NOI18N
+        jBtnMas.setToolTipText("Aumenta en 1 la cantidad del articulo seleccionado");
+        jBtnMas.setEnabled(false);
+        jBtnMas.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jBtnMas.setMargin(new java.awt.Insets(2, 5, 2, 5));
+        jBtnMas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnMasActionPerformed(evt);
+            }
+        });
+        jPanel9.add(jBtnMas);
+
+        jBtnMenos.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jBtnMenos.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/icons8-minus-20.png"))); // NOI18N
+        jBtnMenos.setToolTipText("Disminuye en 1 la cantidad del articulo seleccionado");
+        jBtnMenos.setEnabled(false);
+        jBtnMenos.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jBtnMenos.setMargin(new java.awt.Insets(2, 5, 2, 5));
+        jBtnMenos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnMenosActionPerformed(evt);
+            }
+        });
+        jPanel9.add(jBtnMenos);
 
         jBtnPrecios.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
         jBtnPrecios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/icons8-price_tag_euro.png"))); // NOI18N
@@ -1285,6 +1303,21 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         else{
             facturaDataModel.addItem(articulo, catCajaId);
         }
+
+        //Se actualiza el numero de articulos
+        try {
+            jScrollPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(String.format("Nro Items: %d", facturaDataModel.getItems().size())  ));
+            logicaVuelto();
+
+            int lasrow = facturaDataModel.getItems().size() - 1;
+            System.out.println("Last row is "+ lasrow);
+            jTableFactura.setRowSelectionInterval(lasrow, lasrow);
+
+        } catch (Throwable ex) {
+            System.out.println("Error al setear numero de items");
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        }
     }
     
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -1380,7 +1413,7 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
             setPagosMap();
             
             List<FilaPagoByCaja> pagosByCaja = pagosEfectByCajaFrame.getItems();
-            Integer factIdGen = facturaController.crearFactura(cabeceraFactura, totalesFactura, detalles, pagosMap, pagosByCaja);
+            Integer factIdGen = facturaController.crearFactura(cabeceraFactura, totalesFactura, detalles, pagosMap, pagosByCaja, datosUserSesion.getTdvId());
             
             boolean isFactEdit = idFactura != null && idFactura!=0;
             
@@ -1483,7 +1516,7 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
                 }
             }
             else{
-                Integer factIdGen = facturaController.crearFactura(cabeceraFactura, totalesFactura, detalles, pagosMap, null);
+                Integer factIdGen = facturaController.crearFactura(cabeceraFactura, totalesFactura, detalles, pagosMap, null, datosUserSesion.getTdvId());
                 
                 boolean isFactEdit = idFactura != null && idFactura!=0;
                 
@@ -1612,23 +1645,30 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
     }//GEN-LAST:event_jTFCIKeyPressed
 
     private void jTFVueltoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTFVueltoKeyReleased
+        logicaVuelto();
+    }//GEN-LAST:event_jTFVueltoKeyReleased
+
+    public void logicaVuelto(){
         BigDecimal cambio = BigDecimal.ZERO;
         try{
-            BigDecimal efectivo = new BigDecimal(this.jTFVuelto.getText());            
-            TotalesFactura totalesFactura = facturaDataModel.getTotalesFactura();            
-            BigDecimal totalFactura = totalesFactura.getTotal();
-            
-            if (efectivo.compareTo(totalFactura)>0){
-                cambio = efectivo.subtract(totalFactura);
-                cambio = cambio.setScale(2, RoundingMode.HALF_UP);
+            if (this.jTFVuelto.getText().trim().length() > 0) {
+                BigDecimal efectivo = new BigDecimal(this.jTFVuelto.getText());
+                TotalesFactura totalesFactura = facturaDataModel.getTotalesFactura();
+                BigDecimal totalFactura = totalesFactura.getTotal();
+                if (efectivo.compareTo(totalFactura)>0){
+                    cambio = efectivo.subtract(totalFactura);
+                    cambio = cambio.setScale(2, RoundingMode.HALF_UP);
+                }
+
+                this.jLabelVuelto.setText(cambio.toPlainString());
             }
         }
-        catch(Throwable ex){            
+        catch(Throwable ex){
             System.out.println("Error al calcular el vuelto:"+ ex.getMessage());
             ex.printStackTrace();
-        }        
-        this.jLabelVuelto.setText(cambio.toPlainString());
-    }//GEN-LAST:event_jTFVueltoKeyReleased
+        }
+
+    }
 
     public void doRemoveArtFromFact(){
         try{
@@ -1874,6 +1914,48 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
             }
         });
     }//GEN-LAST:event_jTFCreditoFocusGained
+
+    private void jBtnMasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnMasActionPerformed
+        try{
+            int indexrow = jTableFactura.getSelectedRow();
+            FilaFactura filaFactura = facturaDataModel.getItems().get(indexrow);
+
+            if (filaFactura.getCantidad() != null) {
+                filaFactura.setCantidad(filaFactura.getCantidad()+1);
+            }
+            //facturaDataModel.updateTotales();
+            this.facturaDataModel.fireTableDataChanged();
+            this.facturaDataModel.totalizarFactura();
+
+            jTableFactura.setRowSelectionInterval(indexrow, indexrow);
+
+        }
+        catch(Throwable ex){
+            showMsgError(ex);
+        }
+    }//GEN-LAST:event_jBtnMasActionPerformed
+
+    private void jBtnMenosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnMenosActionPerformed
+
+        try{
+            int indexrow = jTableFactura.getSelectedRow();
+            FilaFactura filaFactura = facturaDataModel.getItems().get(indexrow);
+
+            if (filaFactura.getCantidad() != null && filaFactura.getCantidad()> 1) {
+                filaFactura.setCantidad(filaFactura.getCantidad()-1);
+            }
+
+            //facturaDataModel.updateTotales();
+            this.facturaDataModel.fireTableDataChanged();
+            this.facturaDataModel.totalizarFactura();
+
+            jTableFactura.setRowSelectionInterval(indexrow, indexrow);
+        }
+        catch(Throwable ex){
+            showMsgError(ex);
+        }
+
+    }//GEN-LAST:event_jBtnMenosActionPerformed
     
     public void doFilter(){
         String filtro = this.filtroTF.getText().trim();
@@ -1916,6 +1998,8 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
         jTFIVA.setText( totalesFactura.getIva().toPlainString() );
         jTFTotal.setText( totalesFactura.getTotal().toPlainString() );
         jTFDescFila.setText( totalesFactura.getDescuento().toPlainString() );
+
+        onMontoEfectivoChange();
     }
     
     public JFrame getRoot() {
@@ -1971,6 +2055,8 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField filtroTF;
     private javax.swing.JButton jBtnDescuentos;
+    private javax.swing.JButton jBtnMas;
+    private javax.swing.JButton jBtnMenos;
     private javax.swing.JButton jBtnPrecios;
     private javax.swing.JButton jButtonBorrar;
     private javax.swing.JButton jButtonGuardar;
@@ -1999,15 +2085,14 @@ public class FacturaVentaFrame extends BaseFrame implements IListenerSelectUnity
     private javax.swing.JLabel jLabelTitulo;
     private javax.swing.JLabel jLabelVuelto;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
-    private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel18;
+    private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel1FormasPago;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

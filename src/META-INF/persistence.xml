@@ -31,11 +31,9 @@
       <property name="javax.persistence.jdbc.user" value="postgres"/>
       <property name="javax.persistence.jdbc.driver" value="org.postgresql.Driver"/>
       <!--Clave casa(prod) -->
-      <property name="javax.persistence.jdbc.password" value="root"/>
+      <!-- <property name="javax.persistence.jdbc.password" value="root"/> -->
       <!--Clave maquina trabajo -->
-      <!--
       <property name="javax.persistence.jdbc.password" value="postgres"/>
-      -->
     </properties>
   </persistence-unit>
 </persistence>

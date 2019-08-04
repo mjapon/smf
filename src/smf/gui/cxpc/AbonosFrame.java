@@ -15,6 +15,8 @@ import smf.controller.FacturasJpaController;
 import smf.controller.MovtransaccJpaController;
 import smf.entity.Facturas;
 import smf.gui.BaseFrame;
+import smf.gui.SmartFactMain;
+import smf.util.DatosUserSesion;
 import smf.util.datamodels.rows.FilaCXCP;
 import smf.util.NumbersUtil;
 import smf.util.datamodels.DetallesFactDataModel;
@@ -34,6 +36,8 @@ public class AbonosFrame extends BaseFrame {
     private Integer tra_codigo;//3 cuentas x cobrar, 4-cuentas x pagar
     private DetallesFactDataModel dataModel;
     private FacturasJpaController facturaController;
+    private DatosUserSesion datosUserSesion;
+
     /**
      * Creates new form AbonosFrame
      */
@@ -47,7 +51,9 @@ public class AbonosFrame extends BaseFrame {
         
         controller = new MovtransaccJpaController(em);
         catCajaJpaController = new CatCajasJpaController(em);
-        facturaController = new FacturasJpaController(em);   
+        facturaController = new FacturasJpaController(em);
+
+        this.datosUserSesion = SmartFactMain.getDatosUserSesion();
         
         dataModel = new DetallesFactDataModel(this.tra_codigo);        
         
@@ -384,7 +390,7 @@ public class AbonosFrame extends BaseFrame {
             FilaCatCaja catCaja = (FilaCatCaja)this.jCBCajaId.getSelectedItem();
             AbonoForm form = new AbonoForm(pagoId, monto, observacion, factId, this.tra_codigo, catCaja.getCatCajaId());
         
-            controller.guardarAbono(form);
+            controller.guardarAbono(form, datosUserSesion.getTdvId());
             this.parentFrame.logicaBuscar();
             
             BigDecimal deuda = new BigDecimal(this.jTFValorPend.getText());
