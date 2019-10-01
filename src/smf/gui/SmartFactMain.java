@@ -88,6 +88,13 @@ public class SmartFactMain extends javax.swing.JFrame {
                     facturaFrame.restoreDefaultsDividerLocation();
                     facturaFrame.updateArticulos();
                 }                
+                else if ("Proforma".equalsIgnoreCase(title)){
+                    EstadoAPP estadoApp = estadosApp.get(FacturaVentaFrame.class.getName()+"6");
+                    FacturaVentaFrame facturaFrame = (FacturaVentaFrame)estadoApp.getFrame();                    
+                    facturaFrame.focusFiltro();
+                    facturaFrame.restoreDefaultsDividerLocation();
+                    facturaFrame.updateArticulos();
+                }                
                 else if ("Administrar Productos".equalsIgnoreCase(title)){
                     EstadoAPP estadoApp = estadosApp.get(MercaderiaFrame.class.getName());
                     MercaderiaFrame artsFrame = (MercaderiaFrame)estadoApp.getFrame();                    
@@ -129,6 +136,11 @@ public class SmartFactMain extends javax.swing.JFrame {
                     AdminVentasFrame frame = (AdminVentasFrame)estadoApp.getFrame();
                     frame.logicaBuscar();
                 }
+                else if("Administrar Proformas".equalsIgnoreCase(title)){
+                    EstadoAPP estadoApp = estadosApp.get(AdminVentasFrame.class.getName()+"6");
+                    AdminVentasFrame frame = (AdminVentasFrame)estadoApp.getFrame();
+                    frame.logicaBuscar();
+                }
                 else if("Tickets".equalsIgnoreCase(title)){
                     EstadoAPP estadoApp = estadosApp.get(TicketsFrame.class.getName());
                     TicketsFrame frame = (TicketsFrame)estadoApp.getFrame();
@@ -160,6 +172,13 @@ public class SmartFactMain extends javax.swing.JFrame {
                 EstadoAPP facturaEstadoAPP = new EstadoAPP(newFacturaFrame.getContentPane(), icon, "Factura de Compra", newFacturaFrame);        
 
                 return facturaEstadoAPP;
+            }
+            else if (tra_codigo == 6){
+                FacturaVentaFrame newFacturaFrame = new FacturaVentaFrame(6, null);                
+                newFacturaFrame.setRoot(this);
+                EstadoAPP facturaEstadoAPP = new EstadoAPP(newFacturaFrame.getContentPane(), icon, "Proforma", newFacturaFrame);        
+
+                return facturaEstadoAPP;                
             }            
         }        
         else if (MercaderiaFrame.class.getName().equalsIgnoreCase(className)){
@@ -186,6 +205,16 @@ public class SmartFactMain extends javax.swing.JFrame {
 
                 return adminComprasEstadoAPP;
             }
+            
+            else if (tra_codigo == 6){                
+                //Administrar compras              
+                AdminVentasFrame adminComprasFrame = new AdminVentasFrame(6);//Proformas
+                adminComprasFrame.setRoot(this);
+                EstadoAPP adminComprasEstadoAPP = new EstadoAPP(adminComprasFrame.getContentPane(), icon, "Administrar Proformas", adminComprasFrame);                
+
+                return adminComprasEstadoAPP;
+            }
+            
         }
         else if ( DetalleVentasByCajaFrame.class.getName().equalsIgnoreCase(className) ){
             DetalleVentasByCajaFrame byCajaFrame = new DetalleVentasByCajaFrame(tra_codigo);
@@ -282,6 +311,8 @@ public class SmartFactMain extends javax.swing.JFrame {
         adminMenuItem = new javax.swing.JMenuItem();
         jMenuItem4 = new javax.swing.JMenuItem();
         facturarMenuItem1 = new javax.swing.JMenuItem();
+        jMIProforma = new javax.swing.JMenuItem();
+        jMenuItem5 = new javax.swing.JMenuItem();
         fileMenu3 = new javax.swing.JMenu();
         regFacturaComprarMI = new javax.swing.JMenuItem();
         adminComprasMenuItem = new javax.swing.JMenuItem();
@@ -308,7 +339,7 @@ public class SmartFactMain extends javax.swing.JFrame {
         helpMenu = new javax.swing.JMenu();
         aboutMenuItem = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("SmartFact 1.0");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
@@ -379,6 +410,24 @@ public class SmartFactMain extends javax.swing.JFrame {
             }
         });
         fileMenu.add(facturarMenuItem1);
+
+        jMIProforma.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jMIProforma.setText("Proformas");
+        jMIProforma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMIProformaActionPerformed(evt);
+            }
+        });
+        fileMenu.add(jMIProforma);
+
+        jMenuItem5.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+        jMenuItem5.setText("Listado Proformas");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        fileMenu.add(jMenuItem5);
 
         menuBar.add(fileMenu);
 
@@ -612,6 +661,15 @@ public class SmartFactMain extends javax.swing.JFrame {
         logicaOpenPane(estadoApp);
     }
     
+    public void showNewProformaFrame(){
+        EstadoAPP estadoApp = estadosApp.get(FacturaVentaFrame.class.getName()+"6");
+        if (estadoApp == null){
+            estadoApp = createEstado(FacturaVentaFrame.class.getName(), 6);
+            estadosApp.put(FacturaVentaFrame.class.getName()+"6", estadoApp);
+        }        
+        logicaOpenPane(estadoApp);        
+    }
+    
     private void facturarMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_facturarMenuItemActionPerformed
                 
         showNewFacturaFrame();
@@ -661,6 +719,16 @@ public class SmartFactMain extends javax.swing.JFrame {
         if (estadoApp == null){
             estadoApp = createEstado(AdminVentasFrame.class.getName(), 1);
             estadosApp.put(AdminVentasFrame.class.getName()+"1", estadoApp);
+        }
+
+        logicaOpenPane(estadoApp);
+    }
+    
+    public void showListaProformas(){
+         EstadoAPP estadoApp = estadosApp.get(AdminVentasFrame.class.getName()+"6");        
+        if (estadoApp == null){
+            estadoApp = createEstado(AdminVentasFrame.class.getName(), 6);
+            estadosApp.put(AdminVentasFrame.class.getName()+"6", estadoApp);
         }
 
         logicaOpenPane(estadoApp);
@@ -780,7 +848,7 @@ public class SmartFactMain extends javax.swing.JFrame {
     }
     
     public void showClientesFrame(){
-        EstadoAPP estadoApp = estadosApp.get(ClientesFrame.class.getName());        
+        EstadoAPP estadoApp = estadosApp.get(ClientesFrame.class.getName()+"1");        
         if (estadoApp == null){
             estadoApp = createEstado(ClientesFrame.class.getName(), 1);
             estadosApp.put(ClientesFrame.class.getName()+"1", estadoApp);
@@ -789,7 +857,7 @@ public class SmartFactMain extends javax.swing.JFrame {
     }
     
     public void showProveedoresFrame(){
-        EstadoAPP estadoApp = estadosApp.get(ClientesFrame.class.getName());        
+        EstadoAPP estadoApp = estadosApp.get(ClientesFrame.class.getName()+"2");        
         if (estadoApp == null){
             estadoApp = createEstado(ClientesFrame.class.getName(), 2);
             estadosApp.put(ClientesFrame.class.getName()+"2", estadoApp);
@@ -918,6 +986,14 @@ public class SmartFactMain extends javax.swing.JFrame {
     private void planCuentasMIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_planCuentasMIActionPerformed
         showPlanCuentasFrame();
     }//GEN-LAST:event_planCuentasMIActionPerformed
+
+    private void jMIProformaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMIProformaActionPerformed
+        showNewProformaFrame();
+    }//GEN-LAST:event_jMIProformaActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        showListaProformas();
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
     
     public void showPlanCuentasFrame(){
         PlanCuentasFrame planCuentasFrame = new PlanCuentasFrame();
@@ -1057,6 +1133,7 @@ public class SmartFactMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMIAdminCli;
     private javax.swing.JMenuItem jMIAdminProv;
     private javax.swing.JMenuItem jMICats;
+    private javax.swing.JMenuItem jMIProforma;
     private javax.swing.JMenuItem jMITiposCaja;
     private javax.swing.JMenuItem jMIUnidades;
     private javax.swing.JMenu jMenu1;
@@ -1065,6 +1142,7 @@ public class SmartFactMain extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem movsCajaMenuItem;
     private javax.swing.JMenuItem planCuentasMI;

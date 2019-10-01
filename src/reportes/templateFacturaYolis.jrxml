@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.8.0.final using JasperReports Library version 6.8.0-2ed8dfabb690ff337a5797129f2cd92902b0c87b  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="411" pageHeight="595" columnWidth="371" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05514055-70c5-4a26-bab9-c7fcfeca2a06">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" printOrder="Horizontal" pageWidth="822" pageHeight="595" orientation="Landscape" columnWidth="782" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="05514055-70c5-4a26-bab9-c7fcfeca2a06">
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
 	<property name="com.jaspersoft.studio.unit.pageHeight" value="cm"/>
@@ -89,151 +89,153 @@ round(  extract(YEAR from f.fact_fecha)) as year,
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="182" splitType="Stretch">
+		<band height="249" splitType="Stretch">
 			<textField>
-				<reportElement x="42" y="131" width="170" height="16" uuid="21ea7601-3205-4c90-8940-233374ed50e2"/>
+				<reportElement x="42" y="198" width="170" height="16" uuid="21ea7601-3205-4c90-8940-233374ed50e2"/>
 				<textFieldExpression><![CDATA[$F{cli_ci}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="42" y="166" width="191" height="16" uuid="d5fb8e94-7ecd-47b3-a70f-641c038a5c5c"/>
+				<reportElement x="42" y="233" width="191" height="16" uuid="d5fb8e94-7ecd-47b3-a70f-641c038a5c5c"/>
 				<textFieldExpression><![CDATA[$F{cli_telf}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="51" y="149" width="180" height="16" uuid="8dedd645-519c-4f70-a0c6-ef30ea4c2b05"/>
+				<reportElement x="51" y="216" width="180" height="16" uuid="8dedd645-519c-4f70-a0c6-ef30ea4c2b05"/>
 				<textFieldExpression><![CDATA[$F{cli_dir}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="42" y="114" width="171" height="16" uuid="b78076a2-5368-4fbf-94dc-3cb43f10f5b3">
+				<reportElement x="42" y="181" width="171" height="16" uuid="b78076a2-5368-4fbf-94dc-3cb43f10f5b3">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{nombres}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="237" y="159" width="43" height="18" uuid="82582be5-b147-4485-86cf-422b50c41bf4"/>
+				<reportElement x="237" y="226" width="43" height="18" uuid="82582be5-b147-4485-86cf-422b50c41bf4"/>
 				<textFieldExpression><![CDATA[$F{day}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="280" y="159" width="41" height="18" uuid="d6162b40-fab0-4391-bbc7-aa506376ae43"/>
+				<reportElement x="280" y="226" width="41" height="18" uuid="d6162b40-fab0-4391-bbc7-aa506376ae43"/>
 				<textFieldExpression><![CDATA[$F{month}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="321" y="157" width="51" height="20" uuid="47fc6c23-2600-4a23-8e58-e6e93fab9b55"/>
+				<reportElement x="321" y="224" width="51" height="20" uuid="47fc6c23-2600-4a23-8e58-e6e93fab9b55"/>
 				<textFieldExpression><![CDATA[$F{year}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="237" y="141" width="25" height="16" uuid="9b4aff25-e3dd-4756-ac6b-89f452feef12"/>
+				<reportElement x="237" y="208" width="25" height="16" uuid="9b4aff25-e3dd-4756-ac6b-89f452feef12"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Día:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="280" y="142" width="25" height="16" uuid="e084929d-1a08-4466-b0ae-a39ad9aa916a"/>
+				<reportElement x="280" y="209" width="25" height="16" uuid="e084929d-1a08-4466-b0ae-a39ad9aa916a"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Mes:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="321" y="141" width="25" height="16" uuid="29b69c34-22cd-46db-871e-87bf7974bc7c"/>
+				<reportElement x="321" y="208" width="25" height="16" uuid="29b69c34-22cd-46db-871e-87bf7974bc7c"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Año:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="-4" y="114" width="45" height="16" uuid="4a39debd-c700-4526-b669-45f6405d9a03"/>
+				<reportElement x="-4" y="181" width="45" height="16" uuid="4a39debd-c700-4526-b669-45f6405d9a03"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Cliente:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="-4" y="131" width="45" height="16" uuid="092f9ba9-1bed-422e-a412-3e7c5173b59b"/>
+				<reportElement x="-4" y="198" width="45" height="16" uuid="092f9ba9-1bed-422e-a412-3e7c5173b59b"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[CI/RUC:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="-4" y="149" width="54" height="16" uuid="688f7aa5-b105-44bf-9de1-916a260c2d2b"/>
+				<reportElement x="-4" y="216" width="54" height="16" uuid="688f7aa5-b105-44bf-9de1-916a260c2d2b"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Dirección:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="-5" y="166" width="46" height="16" uuid="1dc89196-4153-410d-8a16-eb5d9969ddc3"/>
+				<reportElement x="-5" y="233" width="46" height="16" uuid="1dc89196-4153-410d-8a16-eb5d9969ddc3"/>
 				<textElement>
 					<font isBold="true"/>
 				</textElement>
 				<text><![CDATA[Telf:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="-3" width="369" height="22" uuid="5931d50d-0351-4a6b-855c-f058e9a2698d">
+				<reportElement x="0" y="51" width="369" height="22" uuid="5931d50d-0351-4a6b-855c-f058e9a2698d">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center">
 					<font size="16" isBold="true"/>
 				</textElement>
-				<text><![CDATA[JARA PIEDRA MARIA BERSABEL]]></text>
+				<text><![CDATA[Misael Fernando Ordóñez Zhagui]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="0" y="18" width="369" height="15" uuid="09d38faa-34d1-49c1-a73b-ce94cd62bad2">
+				<reportElement x="-19" y="73" width="369" height="36" uuid="09d38faa-34d1-49c1-a73b-ce94cd62bad2">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center">
-					<font size="10" isBold="false"/>
+					<font size="7" isBold="false"/>
 				</textElement>
-				<text><![CDATA[TIENDA DE ABARROTES]]></text>
+				<text><![CDATA[*Servicios de reparacion y mantenimiento de maquinaria y de tractores de uso agropecuario, forestal y para la explotación maderera a cambio de una retribución o por contrato. *Venta al por menor de artículos de ferretería. Martillos, sierras, destornilladores y pequeñas herramientas en general, equipo y materiales de prefabricados para armado casero(equipo de bricolage); alambres y cables eléctricos.]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="2" y="36" width="369" height="15" uuid="5688b64a-2435-4078-9409-cd8399f585e6">
+				<reportElement x="2" y="109" width="369" height="15" uuid="5688b64a-2435-4078-9409-cd8399f585e6">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left">
 					<font size="10" isBold="false"/>
 				</textElement>
-				<text><![CDATA[Dir.:Central - Juan Antonio Montesinos s/n y Honorato Lazo]]></text>
+				<text><![CDATA[Dir.:Diez de Marzo s/n]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="50" width="107" height="15" uuid="55d02373-4094-48e2-be79-5b1de0b1d5b2">
+				<reportElement x="3" y="123" width="157" height="15" uuid="55d02373-4094-48e2-be79-5b1de0b1d5b2">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Telf.:07 220 0385]]></text>
+				<text><![CDATA[Telf.:0997574088
+]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="220" y="50" width="147" height="15" uuid="2a0cd398-2b7f-4f69-8fbf-c03238308b15">
+				<reportElement x="220" y="123" width="147" height="15" uuid="2a0cd398-2b7f-4f69-8fbf-c03238308b15">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Center">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[SARAGURO-LOJA-ECUADOR]]></text>
+				<text><![CDATA[Saraguro-Loja-Ecuador]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="3" y="64" width="107" height="15" uuid="44ef280e-6812-4396-8ccc-21d3d3a9a663">
+				<reportElement x="3" y="137" width="107" height="15" uuid="44ef280e-6812-4396-8ccc-21d3d3a9a663">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[R.U.C.:1103607113001]]></text>
+				<text><![CDATA[R.U.C.:1104530462001
+]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="223" y="67" width="144" height="15" uuid="9a89bd63-19d9-4c60-b272-9133c71be111">
+				<reportElement x="223" y="140" width="144" height="15" uuid="9a89bd63-19d9-4c60-b272-9133c71be111">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left">
 					<font size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Aut. Nro S.R.I. 1124965890]]></text>
+				<text><![CDATA[Aut. Nro S.R.I. 11025391797]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="81" width="119" height="26" uuid="de32d766-f586-4cb8-9a94-074665c068db">
+				<reportElement x="1" y="154" width="119" height="26" uuid="de32d766-f586-4cb8-9a94-074665c068db">
 					<property name="com.jaspersoft.studio.unit.height" value="px"/>
 				</reportElement>
 				<textElement textAlignment="Left">
@@ -242,12 +244,18 @@ round(  extract(YEAR from f.fact_fecha)) as year,
 				<text><![CDATA[FACTURA NRO:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="123" y="80" width="207" height="30" uuid="f82e262c-eaf2-4354-a11f-93d661ef568a"/>
+				<reportElement x="123" y="153" width="207" height="30" uuid="f82e262c-eaf2-4354-a11f-93d661ef568a"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{fact_num}]]></textFieldExpression>
 			</textField>
+			<image scaleImage="FillFrame">
+				<reportElement stretchType="ContainerBottom" x="2" y="-14" width="370" height="65" uuid="758dedb5-c5b5-48a1-9441-ceb5f382d587">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA["C:/dev/smf/logos/IMG-20190722-WA0000.jpg"]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -320,7 +328,7 @@ round(  extract(YEAR from f.fact_fecha)) as year,
 		<band splitType="Stretch"/>
 	</columnFooter>
 	<pageFooter>
-		<band height="120" splitType="Stretch">
+		<band height="121" splitType="Stretch">
 			<rectangle>
 				<reportElement x="266" y="4" width="110" height="110" uuid="4016c032-277f-474a-9336-b7bbb155a972"/>
 			</rectangle>
@@ -406,6 +414,30 @@ round(  extract(YEAR from f.fact_fecha)) as year,
 				</reportElement>
 				<textFieldExpression><![CDATA[$F{fact_subt0}]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="13" y="87" width="85" height="16" uuid="6dbe9c0d-4ce8-4eaf-bca8-bb31ccdead1d"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[F) Autorizada]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="160" y="85" width="85" height="16" uuid="a1395e19-5ecc-4fd4-95d7-019c1e4fe3cc"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[F) Cliente]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="80" width="110" height="1" uuid="94dab9b2-d7df-4a52-add6-96c2983dfc0a">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+			</line>
+			<line>
+				<reportElement x="140" y="80" width="110" height="1" uuid="129b2c91-381d-446e-86fc-15d78558fcd1">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+				</reportElement>
+			</line>
 		</band>
 	</pageFooter>
 	<summary>

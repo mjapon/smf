@@ -7,6 +7,8 @@ package smf.util.datamodels;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import smf.controller.ArticulosJpaController;
 import smf.util.datamodels.rows.FilaFactura;
 
 
@@ -18,8 +20,8 @@ import smf.util.datamodels.rows.FilaFactura;
 public class DetallesFactDataModel extends FacturaDataModel{
     
     
-    public DetallesFactDataModel(Integer tra_codigo){
-        super(tra_codigo);
+    public DetallesFactDataModel(Integer tra_codigo, ArticulosJpaController articulosJpaController){
+        super(tra_codigo, articulosJpaController);
     }
 
     @Override

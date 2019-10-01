@@ -8,10 +8,12 @@ package smf.util.datamodels;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+
+import smf.controller.ArticulosJpaController;
 import smf.entity.Articulos;
 import smf.gui.SmartFactMain;
 import smf.gui.facte.IFacturaEdit;
@@ -23,7 +25,7 @@ import smf.util.TotalesFactura;
  * @author mjapon
  */
 public class FacturaDataModel extends AbstractTableModel{
-    
+
     public enum ColumnaFacturaEnum{
         CODBAR(0, "Codbar", String.class),
         ARTICULO(1, "Artículo", String.class),
@@ -69,11 +71,13 @@ public class FacturaDataModel extends AbstractTableModel{
     protected TotalesFactura totalesFactura;
     protected JTable jtable;
     protected Integer tra_codigo;
+    private ArticulosJpaController artsController;
     
-    public FacturaDataModel(Integer tra_codigo){
+    public FacturaDataModel(Integer tra_codigo, ArticulosJpaController artController){
         super();
         totalesFactura = new TotalesFactura();
         this.tra_codigo = tra_codigo;
+        this.artsController = artController;
     }
     
     public void removeItem(int rowIndex){
@@ -192,7 +196,31 @@ public class FacturaDataModel extends AbstractTableModel{
             FilaFactura filafactura = items.get(rowIndex);            
             
             if (columnIndex == ColumnaFacturaEnum.CANTIDAD.index) {
-                filafactura.setCantidad(Double.valueOf(aValue.toString()));
+
+                Double newCantSet = Double.valueOf(aValue.toString());
+
+                boolean setnewCant = true;
+
+                if (tra_codigo == 1 & "B".equalsIgnoreCase(filafactura.getTipo())) {
+                    Articulos art = artsController.findArticulos(filafactura.getCodigoArt());
+                    if (art != null) {
+                        Double currentArtInv = art.getArtInv().doubleValue();
+                        if ((currentArtInv - newCantSet) >= 0) {
+                            setnewCant = true;
+                        }
+                        else{
+                            setnewCant = false;
+                            JOptionPane.showMessageDialog(null, "La cantidad excede el total de inventarios para este artículo!");
+                        }
+                    }
+                }
+
+                if (setnewCant) {
+                    filafactura.setCantidad(newCantSet);
+                }
+                //Verificar stock de inventario
+
+
             }
             else if (columnIndex == ColumnaFacturaEnum.IVA.index){
                 filafactura.setIsIva("SI".equalsIgnoreCase(aValue.toString()));

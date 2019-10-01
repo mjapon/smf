@@ -455,12 +455,18 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanelDetArt = new javax.swing.JPanel();
         jPanel20 = new javax.swing.JPanel();
+        jPanel23 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         jCBTipo = new javax.swing.JComboBox<>();
+        jPanel24 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
+        jPanelCodBarra = new javax.swing.JPanel();
         jTFCodBarra = new javax.swing.JTextField();
+        jBtnEditCodBarra = new javax.swing.JButton();
+        jPanel25 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jCBCategoria = new javax.swing.JComboBox<>();
+        jPanel26 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         jCBProveedor = new javax.swing.JComboBox<>();
         jPanel21 = new javax.swing.JPanel();
@@ -740,10 +746,13 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
 
         jPanelDetArt.setLayout(new java.awt.GridLayout(1, 3, 60, 40));
 
-        jPanel20.setLayout(new java.awt.GridLayout(4, 2));
+        jPanel20.setLayout(new java.awt.GridLayout(4, 1));
+
+        jPanel23.setLayout(new java.awt.BorderLayout());
 
         jLabel10.setText("Tipo:");
-        jPanel20.add(jLabel10);
+        jLabel10.setPreferredSize(new java.awt.Dimension(40, 14));
+        jPanel23.add(jLabel10, java.awt.BorderLayout.WEST);
 
         jCBTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "BIEN", "SERVICIO" }));
         jCBTipo.setEnabled(false);
@@ -752,10 +761,17 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
                 jCBTipoActionPerformed(evt);
             }
         });
-        jPanel20.add(jCBTipo);
+        jPanel23.add(jCBTipo, java.awt.BorderLayout.CENTER);
+
+        jPanel20.add(jPanel23);
+
+        jPanel24.setLayout(new java.awt.BorderLayout());
 
         jLabel4.setText("Código:");
-        jPanel20.add(jLabel4);
+        jLabel4.setPreferredSize(new java.awt.Dimension(40, 14));
+        jPanel24.add(jLabel4, java.awt.BorderLayout.WEST);
+
+        jPanelCodBarra.setLayout(new java.awt.BorderLayout());
 
         jTFCodBarra.setEditable(false);
         jTFCodBarra.addActionListener(new java.awt.event.ActionListener() {
@@ -768,18 +784,43 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
                 jTFCodBarraKeyPressed(evt);
             }
         });
-        jPanel20.add(jTFCodBarra);
+        jPanelCodBarra.add(jTFCodBarra, java.awt.BorderLayout.CENTER);
+
+        jBtnEditCodBarra.setIcon(new javax.swing.ImageIcon(getClass().getResource("/smf/gui/icons/icons8-edit-18.png"))); // NOI18N
+        jBtnEditCodBarra.setToolTipText("Editar el código de barra");
+        jBtnEditCodBarra.setMinimumSize(new java.awt.Dimension(40, 27));
+        jBtnEditCodBarra.setPreferredSize(new java.awt.Dimension(30, 27));
+        jBtnEditCodBarra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnEditCodBarraActionPerformed(evt);
+            }
+        });
+        jPanelCodBarra.add(jBtnEditCodBarra, java.awt.BorderLayout.EAST);
+
+        jPanel24.add(jPanelCodBarra, java.awt.BorderLayout.CENTER);
+
+        jPanel20.add(jPanel24);
+
+        jPanel25.setLayout(new java.awt.BorderLayout());
 
         jLabel8.setText("Categoría:");
-        jPanel20.add(jLabel8);
+        jLabel8.setPreferredSize(new java.awt.Dimension(60, 14));
+        jPanel25.add(jLabel8, java.awt.BorderLayout.WEST);
 
         jCBCategoria.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "1", "2", "3" }));
-        jPanel20.add(jCBCategoria);
+        jPanel25.add(jCBCategoria, java.awt.BorderLayout.CENTER);
+
+        jPanel20.add(jPanel25);
+
+        jPanel26.setLayout(new java.awt.BorderLayout());
 
         jLabel11.setText("Proveedor:");
-        jPanel20.add(jLabel11);
+        jLabel11.setPreferredSize(new java.awt.Dimension(60, 14));
+        jPanel26.add(jLabel11, java.awt.BorderLayout.WEST);
 
-        jPanel20.add(jCBProveedor);
+        jPanel26.add(jCBProveedor, java.awt.BorderLayout.CENTER);
+
+        jPanel20.add(jPanel26);
 
         jPanelDetArt.add(jPanel20);
 
@@ -1213,10 +1254,14 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
         }
         catch(Throwable ex){
             showMsgError(ex);
-        }       
-         
-        
+        }
     }//GEN-LAST:event_jCrearProvBtnActionPerformed
+
+    private void jBtnEditCodBarraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnEditCodBarraActionPerformed
+        EditCodBarraFrame barraFrame = new EditCodBarraFrame(this, this.artEdited);
+        barraFrame.centerOnScreen();
+        barraFrame.setVisible(true);        
+    }//GEN-LAST:event_jBtnEditCodBarraActionPerformed
     public void loadCats(){
         try{
             categoriasList = catsController.listar();
@@ -1238,8 +1283,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
             }
             catch(Throwable ex){
                 showMsgError(ex);
-            }
-            
+            }            
         }
         catch(Throwable ex){
             showMsgError(ex);
@@ -1262,8 +1306,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
             }
             catch(Throwable ex){
                 showMsgError(ex);
-            }
-             
+            }             
          }
          catch(Throwable ex){
             showMsgError(ex);
@@ -1273,12 +1316,9 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
     public void afterCloseNewPersona(){
         System.out.println("afterCloseNewPersona --> ");
         loadProveedores();
-    }   
+    }
     
-    
-    
-    //Metodos para el formulario
-    
+    //Metodos para el formulario    
     public void clearForms(){
         jTFCodBarra.setText("");
         jTFNombre.setText("");
@@ -1288,8 +1328,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
         jTFInventario.setText("");
         jTFFechaCadu.setText("");
         //tfIVAPC.setText("");
-    }
-    
+    }   
     
     public void loadDetallesArt(Integer artId){
         clearForms();
@@ -1462,6 +1501,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
     private javax.swing.JButton btnBorrar;
     private javax.swing.JTextField filtroTF;
     private javax.swing.JButton jBtnCaducados;
+    private javax.swing.JButton jBtnEditCodBarra;
     private javax.swing.JButton jBtnPrecios;
     private javax.swing.JButton jButtonSaveArt;
     private javax.swing.JComboBox<String> jCBCategoria;
@@ -1513,6 +1553,10 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
     private javax.swing.JPanel jPanel20;
     private javax.swing.JPanel jPanel21;
     private javax.swing.JPanel jPanel22;
+    private javax.swing.JPanel jPanel23;
+    private javax.swing.JPanel jPanel24;
+    private javax.swing.JPanel jPanel25;
+    private javax.swing.JPanel jPanel26;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -1522,6 +1566,7 @@ public class MercaderiaFrame extends BaseFrame implements ParentNewArtFrame, IPa
     private javax.swing.JPanel jPanel9;
     private javax.swing.JPanel jPanelBtns;
     private javax.swing.JPanel jPanelCenter;
+    private javax.swing.JPanel jPanelCodBarra;
     private javax.swing.JPanel jPanelDetArt;
     private javax.swing.JPanel jPanelKardexArt;
     private javax.swing.JPanel jPanelNorth;

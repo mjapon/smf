@@ -39,10 +39,11 @@ public class PrintFactUtil {
     
     public static void imprimir(CtesJpaController ctesController, DatosCabeceraFactura cabecera, 
             TotalesFactura totales, 
-            List<FilaFactura> detalles, Integer factId){
+            List<FilaFactura> detalles, Integer factId, Integer traId){
         try{
             System.out.println("Logica de impresion-->"); 
             
+            /*
             String templateCab = ctesController.findValueByClave("TEMPLATE_CAB");
             
             if (templateCab == null){
@@ -76,7 +77,14 @@ public class PrintFactUtil {
                 }
             }
             
-            String rutaReporteFact = ctesController.findValueByClave("RUTA_REPORTE_FACT");
+            */
+            
+            String claveReporte = "RUTA_REPORTE_FACT";
+            if (traId==6){//inventarios
+                claveReporte = "RUTA_REPORTE_PROF";
+            }
+            
+            String rutaReporteFact = ctesController.findValueByClave(claveReporte);
             
             JasperUtil.showFactura(factId, rutaReporteFact);
             

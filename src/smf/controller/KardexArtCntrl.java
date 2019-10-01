@@ -88,7 +88,7 @@ public class KardexArtCntrl extends BaseJpaController<Kardexart>{
             kardexart.setKaArtId(artId);
             kardexart.setKaAccion("ACTUALIZACIÓN DIRECTA INVENTARIO");
             //kardexart.setKaRefid();
-            kardexart.setKaValorant(articulo.getArtInv());
+            kardexart.setKaValorant(invAnt);
             //kardexart.setKaCantidad();
             kardexart.setKaValordesp(invActual);
             kardexart.setKaFechareg(new Date());

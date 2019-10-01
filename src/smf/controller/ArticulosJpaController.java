@@ -84,6 +84,17 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
         Integer result = runCountQuery("select count(*) from detallesfact where art_id= "+artId);
         return result>0;
     }
+    
+    public BigDecimal getInventario(Integer artId){
+        if (artId!=null){
+            String sql = "select art_inv from articulos where art_id = " + artId.toString();
+            List<BigDecimal> resultlist =  newNativeQuery(sql).getResultList();
+            if (resultlist!=null){
+                return (BigDecimal)resultlist.get(0);
+            }
+        }
+        return null;        
+    }
 
     public void edit(Articulos articulos) throws NonexistentEntityException, Exception {
         EntityManager em = null;
@@ -161,9 +172,18 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
         EntityManager em = getEntityManager();
         try {
             return em.find(Articulos.class, id);
+            
+            /*
+            String sql="select * from articulos where art_id="+id;
+            List<Articulos> arts = (List<Articulos>) em.createNativeQuery(sql, Articulos.class).getResultList();
+            if (arts != null && arts.size()>0){
+                return arts.get(0);
+            } 
+            */
         } finally {
             ////em.close();
         }
+        //return null;
     }
 
     public Integer getCatCajaId(Integer artId){
@@ -360,6 +380,32 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
         }
     }
     
+    public void actualizarCodBarra(Integer artId, String newCodBarra) throws Throwable{
+        try{
+            em.getTransaction().begin();            
+            Articulos articulo = findArticulos(artId);            
+            if (articulo != null){                    
+                if (!newCodBarra.trim().toUpperCase().equalsIgnoreCase(articulo.getArtCodbar().trim().toUpperCase())){
+                    if (yaExisteBarcode(newCodBarra.trim())){
+                        throw new ErrorValidException("El código de barra:"+newCodBarra+" ya ha sido registrado, no se puede actualizar");
+                    }
+                }                    
+                articulo.setArtCodbar(newCodBarra.trim().toUpperCase());
+            }
+            else{
+                throw  new Exception("No se encuentra registrado el articulo con codigo:"+artId.toString());                
+            }           
+            
+            em.persist(articulo);
+            em.flush();
+            em.getTransaction().commit();
+        }
+        catch(Throwable ex){
+            rollbackTrans();
+            logErrorWithThrow(ex);
+        }
+    }
+    
     public void actualizarArticulo(FilaArticulo filaArt) throws Throwable{
         try{
             em.getTransaction().begin();
@@ -446,6 +492,11 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
                     }                    
                     
                     articulo.setArtCodbar(filaArt.getCodBarra().trim().toUpperCase());
+                    boolean registrarKardex = false;
+                    BigDecimal inventarioAnt = articulo.getArtInv(); 
+                    if (filaArt.getInventario().compareTo(articulo.getArtInv()) != 0){
+                        registrarKardex = true;
+                    }
                     articulo.setArtInv(filaArt.getInventario());
                     articulo.setArtIva(filaArt.isIva());
                     articulo.setArtNombre(filaArt.getNombre().toUpperCase());
@@ -458,6 +509,10 @@ public class ArticulosJpaController extends BaseJpaController implements Seriali
                     
                     if (filaArt.getFechaCaducidad() != null && filaArt.getFechaCaducidad().trim().length()>4){
                         articulo.setFechaCaducidad(FechasUtil.parse(filaArt.getFechaCaducidad()));
+                    }
+                    
+                    if (registrarKardex){
+                        kardexCntrl.registrarActualizacionInv(articulo.getArtId(), inventarioAnt, filaArt.getInventario());
                     }
 
                     em.persist(articulo);

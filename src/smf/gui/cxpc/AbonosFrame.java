@@ -10,6 +10,8 @@ import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+
+import smf.controller.ArticulosJpaController;
 import smf.controller.CatCajasJpaController;
 import smf.controller.FacturasJpaController;
 import smf.controller.MovtransaccJpaController;
@@ -32,6 +34,7 @@ public class AbonosFrame extends BaseFrame {
     private FilaCXCP fila;
     private CuentasXCBPFrame parentFrame;
     private MovtransaccJpaController controller;
+    private ArticulosJpaController articulosJpaController;
     private CatCajasJpaController catCajaJpaController;
     private Integer tra_codigo;//3 cuentas x cobrar, 4-cuentas x pagar
     private DetallesFactDataModel dataModel;
@@ -52,10 +55,11 @@ public class AbonosFrame extends BaseFrame {
         controller = new MovtransaccJpaController(em);
         catCajaJpaController = new CatCajasJpaController(em);
         facturaController = new FacturasJpaController(em);
+        articulosJpaController = new ArticulosJpaController(em);
 
         this.datosUserSesion = SmartFactMain.getDatosUserSesion();
         
-        dataModel = new DetallesFactDataModel(this.tra_codigo);        
+        dataModel = new DetallesFactDataModel(this.tra_codigo, articulosJpaController);
         
         jLabelRefer.setText(fila.getReferente());
         jScrollPane2.setBorder(javax.swing.BorderFactory.createTitledBorder("Detalles de la factura Nro:" + fila.getNumFactura() ));
@@ -67,8 +71,7 @@ public class AbonosFrame extends BaseFrame {
     public void loadDetallesFact(){
         
         try{
-            
-            dataModel = new DetallesFactDataModel(this.tra_codigo);
+            dataModel = new DetallesFactDataModel(this.tra_codigo, this.articulosJpaController);
             List<Object[]> detalles = facturaController.listarDetalles(this.fila.getCodFactura(),true);
             Facturas factura = facturaController.buscar(this.fila.getCodFactura());
 

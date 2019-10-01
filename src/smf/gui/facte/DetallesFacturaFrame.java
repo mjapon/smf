@@ -448,7 +448,7 @@ public class DetallesFacturaFrame extends BaseFrame {
         TotalesFactura totales = (TotalesFactura)datosFactura.get("totales");
         List<FilaFactura> detalles = (List<FilaFactura>)datosFactura.get("detalles");
         
-        PrintFactUtil.imprimir(ctesController, cabecera, totales, detalles, factId);  
+        PrintFactUtil.imprimir(ctesController, cabecera, totales, detalles, factId, this.tra_codigo);  
         
         setVisible(false);
         

@@ -1854,6 +1854,7 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
 
             boolean esFacturaCompra = datosCabecera.getTraCodigo() == 2;
             boolean esFacturaVenta = datosCabecera.getTraCodigo() == 1;
+            boolean esProforma = datosCabecera.getTraCodigo() == 6;
 
             Integer tipoCliente = 1;//1-cliente, 2-proveedor
             if (esFacturaCompra) {
@@ -1925,6 +1926,10 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                         secFactura);
             } else if (esFacturaCompra) {
                 numeroFactura = datosCabecera.getNumFactura();
+            }
+            else if (esProforma){                
+                String secFactura = StringUtil.zfill(new Integer(datosCabecera.getNumFactura()), 15);                               
+                numeroFactura = secFactura;
             }
 
 
@@ -2045,6 +2050,12 @@ public class FacturasJpaController extends BaseJpaController<Facturas> implement
                     String claveSecuencia = String.format("TDV_%d", tdvId);
                     secuenciasController.genSecuencia(claveSecuencia);
                 }
+            }
+            else if (esProforma){
+                if (datosCabecera.getFactId() == null) {
+                    String claveSecuencia = String.format("TDVP_%d", tdvId);
+                    secuenciasController.genSecuencia(claveSecuencia);
+                }                
             }
 
             em.flush();
